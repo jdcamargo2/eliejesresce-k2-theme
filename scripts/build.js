@@ -1959,6 +1959,14 @@ function buildTheme(tokens, variantName) {
 
   const tokenColors = [
     createTokenColor(
+      "TypeScript primitive types",
+      [
+        "support.type.primitive.ts",
+        "support.type.primitive.tsx"
+      ],
+      syntax.primitiveType
+    ),
+    createTokenColor(
       "Python self and cls",
       [
         "variable.language.special.self.python",
@@ -1966,6 +1974,57 @@ function buildTheme(tokens, variantName) {
         "variable.parameter.function.language.special.cls.python"
       ],
       syntax.selfReference
+    ),
+
+    createTokenColor(
+      "TypeScript interface declaration keyword",
+      [
+        "storage.type.interface.ts",
+        "storage.type.interface.tsx"
+      ],
+      syntax.keyword
+    ),
+
+    createTokenColor(
+      "TypeScript interface declaration name",
+      [
+        "entity.name.type.interface.ts",
+        "entity.name.type.interface.tsx"
+      ],
+      syntax.function
+    ),
+
+    createTokenColor(
+      "TypeScript utility types",
+      [
+        "support.type.builtin.ts",
+        "support.type.builtin.tsx",
+        "support.type.object.module.ts",
+        "support.type.object.module.tsx"
+      ],
+      syntax.modulePath
+    ),
+
+    createTokenColor(
+      "TypeScript primitive types",
+      [
+        "support.type.primitive.ts",
+        "support.type.primitive.tsx",
+        "storage.type.ts",
+        "storage.type.tsx"
+      ],
+      syntax.type
+    ),
+
+    createTokenColor(
+      "TypeScript properties",
+      [
+        "variable.other.property.ts",
+        "variable.other.property.tsx",
+        "meta.object-literal.key.ts",
+        "meta.object-literal.key.tsx"
+      ],
+      syntax.property
     ),
 
     createTokenColor(
@@ -2807,7 +2866,7 @@ function buildTheme(tokens, variantName) {
     ),
 
     "interface.declaration": assertColor(
-      syntax.type,
+      syntax.interfaceDeclaration,
       "semanticTokenColors.interface.declaration"
     ),
 
@@ -2866,7 +2925,7 @@ function buildTheme(tokens, variantName) {
     ),
 
     "type.defaultLibrary": assertColor(
-      syntax.builtin,
+      syntax.builtinType,
       "semanticTokenColors.type.defaultLibrary"
     ),
     variable: assertColor(

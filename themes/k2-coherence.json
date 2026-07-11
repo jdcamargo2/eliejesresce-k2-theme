@@ -248,6 +248,16 @@
   },
   "tokenColors": [
     {
+      "name": "TypeScript primitive types",
+      "scope": [
+        "support.type.primitive.ts",
+        "support.type.primitive.tsx"
+      ],
+      "settings": {
+        "foreground": "#68B8C3"
+      }
+    },
+    {
       "name": "Python self and cls",
       "scope": [
         "variable.language.special.self.python",
@@ -256,6 +266,62 @@
       ],
       "settings": {
         "foreground": "#A18BD4"
+      }
+    },
+    {
+      "name": "TypeScript interface declaration keyword",
+      "scope": [
+        "storage.type.interface.ts",
+        "storage.type.interface.tsx"
+      ],
+      "settings": {
+        "foreground": "#7698EE"
+      }
+    },
+    {
+      "name": "TypeScript interface declaration name",
+      "scope": [
+        "entity.name.type.interface.ts",
+        "entity.name.type.interface.tsx"
+      ],
+      "settings": {
+        "foreground": "#BAA7E2"
+      }
+    },
+    {
+      "name": "TypeScript utility types",
+      "scope": [
+        "support.type.builtin.ts",
+        "support.type.builtin.tsx",
+        "support.type.object.module.ts",
+        "support.type.object.module.tsx"
+      ],
+      "settings": {
+        "foreground": "#A6ADB6"
+      }
+    },
+    {
+      "name": "TypeScript primitive types",
+      "scope": [
+        "support.type.primitive.ts",
+        "support.type.primitive.tsx",
+        "storage.type.ts",
+        "storage.type.tsx"
+      ],
+      "settings": {
+        "foreground": "#89CDD5"
+      }
+    },
+    {
+      "name": "TypeScript properties",
+      "scope": [
+        "variable.other.property.ts",
+        "variable.other.property.tsx",
+        "meta.object-literal.key.ts",
+        "meta.object-literal.key.tsx"
+      ],
+      "settings": {
+        "foreground": "#68B8C3"
       }
     },
     {
@@ -1158,7 +1224,7 @@
     "method:python": "#A18BD4",
     "type.declaration": "#89CDD5",
     "class.declaration": "#89CDD5",
-    "interface.declaration": "#89CDD5",
+    "interface.declaration": "#68B8C3",
     "struct.declaration": "#89CDD5",
     "namespace": "#A6ADB6",
     "variable.readonly": "#7698EE",
@@ -1169,7 +1235,7 @@
     "method.static": "#BAA7E2",
     "function.static": "#BAA7E2",
     "class.defaultLibrary": "#68B8C3",
-    "type.defaultLibrary": "#68B8C3",
+    "type.defaultLibrary": "#91AFF4",
     "variable": "#C2C7CE",
     "variable.defaultLibrary": "#68B8C3",
     "parameter": "#A6ADB6",
