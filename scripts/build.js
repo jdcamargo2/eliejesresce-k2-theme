@@ -10,6 +10,85 @@ const OUTPUT_PATH = path.join(ROOT_DIR, "themes", "k2-coherence.json");
 const REFERENCE_PATTERN = /^\{([a-zA-Z0-9_.-]+)\}$/;
 const HEX_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/;
 
+const REQUIRED_TOKEN_PATHS = [
+  "palette.black",
+
+  "semantic.contextStrong",
+  "semantic.context",
+  "semantic.contextSecondary",
+  "semantic.contextMuted",
+  "semantic.contextFaint",
+  "semantic.direction",
+  "semantic.structure",
+  "semantic.transformation",
+  "semantic.validData",
+  "semantic.attention",
+  "semantic.rupture",
+
+  "components.syntax.foreground",
+  "components.syntax.comment",
+  "components.syntax.keyword",
+  "components.syntax.keywordControl",
+  "components.syntax.operator",
+  "components.syntax.type",
+  "components.syntax.function",
+  "components.syntax.variable",
+  "components.syntax.property",
+  "components.syntax.string",
+  "components.syntax.number",
+  "components.syntax.invalid",
+
+  "components.brackets.orbit1",
+  "components.brackets.orbit2",
+  "components.brackets.orbit3",
+  "components.brackets.orbit4",
+  "components.brackets.orbit5",
+  "components.brackets.orbit6",
+  "components.brackets.unexpected",
+
+  "components.states.focus",
+  "components.states.information",
+  "components.states.modified",
+  "components.states.added",
+  "components.states.deleted",
+  "components.states.warning",
+  "components.states.error",
+
+  "variants.coherence.name",
+  "variants.coherence.type",
+  "variants.coherence.uiTheme",
+  "variants.coherence.surface.editor",
+  "variants.coherence.surface.sidebar",
+  "variants.coherence.surface.panel",
+  "variants.coherence.surface.overlay",
+  "variants.coherence.surface.border",
+  "variants.coherence.surface.focusBorder"
+];
+
+const REQUIRED_COHERENCE_SURFACES = [
+  "editor",
+  "editorElevated",
+  "sidebar",
+  "sidebarSection",
+  "activityBar",
+  "titleBar",
+  "statusBar",
+  "panel",
+  "overlay",
+  "overlayElevated",
+  "input",
+  "button",
+  "buttonHover",
+  "border",
+  "borderSubtle",
+  "focusBorder",
+  "selection",
+  "selectionInactive",
+  "lineHighlight",
+  "hover",
+  "active"
+];
+
 function fail(message) {
   console.error(`K2 build failed: ${message}`);
   process.exitCode = 1;
@@ -48,6 +127,201 @@ function getValueByPath(root, referencePath) {
   }
 
   return current;
+}
+
+function isPlainObject(value) {
+  return (
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value)
+  );
+}
+
+function assertPlainObject(value, label) {
+  if (!isPlainObject(value)) {
+    throw new Error(`Expected "${label}" to be an object`);
+  }
+}
+
+function assertRequiredPaths(tokens) {
+  for (const tokenPath of REQUIRED_TOKEN_PATHS) {
+    getValueByPath(tokens, tokenPath);
+  }
+}
+
+function validatePalette(value, currentPath = ["palette"]) {
+  if (!isPlainObject(value)) {
+    throw new Error("Expected \"palette\" to be an object");
+  }
+
+  const entries = Object.entries(value);
+
+  if (entries.length === 0) {
+    throw new Error("Palette cannot be empty");
+  }
+
+  for (const [key, childValue] of entries) {
+    const childPath = [...currentPath, key];
+
+    if (isPlainObject(childValue)) {
+      validatePalette(childValue, childPath);
+      continue;
+    }
+
+    if (
+      typeof childValue !== "string" ||
+      !HEX_COLOR_PATTERN.test(childValue)
+    ) {
+      throw new Error(
+        `Palette token "${childPath.join(".")}" must be a valid ` +
+        `#RRGGBB or #RRGGBBAA color`
+      );
+    }
+  }
+}
+
+function assertNoRawColorsOutsidePalette(value, currentPath = []) {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => {
+      assertNoRawColorsOutsidePalette(
+        item,
+        [...currentPath, String(index)]
+      );
+    });
+
+    return;
+  }
+
+  if (isPlainObject(value)) {
+    for (const [key, childValue] of Object.entries(value)) {
+      assertNoRawColorsOutsidePalette(
+        childValue,
+        [...currentPath, key]
+      );
+    }
+
+    return;
+  }
+
+  if (
+    typeof value === "string" &&
+    HEX_COLOR_PATTERN.test(value) &&
+    currentPath[0] !== "palette"
+  ) {
+    throw new Error(
+      `Raw color outside palette at "${currentPath.join(".")}": ` +
+      `${value}. Use a token reference instead.`
+    );
+  }
+}
+
+function assertNoUnresolvedReferences(value, currentPath = []) {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => {
+      assertNoUnresolvedReferences(
+        item,
+        [...currentPath, String(index)]
+      );
+    });
+
+    return;
+  }
+
+  if (isPlainObject(value)) {
+    for (const [key, childValue] of Object.entries(value)) {
+      assertNoUnresolvedReferences(
+        childValue,
+        [...currentPath, key]
+      );
+    }
+
+    return;
+  }
+
+  if (
+    typeof value === "string" &&
+    REFERENCE_PATTERN.test(value)
+  ) {
+    throw new Error(
+      `Unresolved token reference at "${currentPath.join(".")}": ` +
+      value
+    );
+  }
+}
+
+function validateCoherenceVariant(tokens) {
+  const variant = tokens.variants.coherence;
+
+  assertPlainObject(variant, "variants.coherence");
+  assertPlainObject(
+    variant.surface,
+    "variants.coherence.surface"
+  );
+
+  if (variant.name !== "K2 Coherence") {
+    throw new Error(
+      `Expected variants.coherence.name to be "K2 Coherence"`
+    );
+  }
+
+  if (variant.type !== "dark") {
+    throw new Error(
+      `Expected variants.coherence.type to be "dark"`
+    );
+  }
+
+  if (variant.uiTheme !== "vs-dark") {
+    throw new Error(
+      `Expected variants.coherence.uiTheme to be "vs-dark"`
+    );
+  }
+
+  for (const surfaceName of REQUIRED_COHERENCE_SURFACES) {
+    if (
+      !Object.prototype.hasOwnProperty.call(
+        variant.surface,
+        surfaceName
+      )
+    ) {
+      throw new Error(
+        `Missing required Coherence surface: ` +
+        `variants.coherence.surface.${surfaceName}`
+      );
+    }
+  }
+}
+
+function validateRawTokens(tokens) {
+  assertPlainObject(tokens, "tokens");
+  assertPlainObject(tokens.palette, "palette");
+  assertPlainObject(tokens.semantic, "semantic");
+  assertPlainObject(tokens.components, "components");
+  assertPlainObject(tokens.variants, "variants");
+
+  assertPlainObject(
+    tokens.components.syntax,
+    "components.syntax"
+  );
+  assertPlainObject(
+    tokens.components.brackets,
+    "components.brackets"
+  );
+  assertPlainObject(
+    tokens.components.states,
+    "components.states"
+  );
+
+  validatePalette(tokens.palette);
+  assertRequiredPaths(tokens);
+  assertNoRawColorsOutsidePalette(tokens);
+  validateCoherenceVariant(tokens);
+}
+
+function validateResolvedTokens(tokens) {
+  assertNoUnresolvedReferences(tokens);
+
+  validatePalette(tokens.palette);
+  validateCoherenceVariant(tokens);
 }
 
 function resolveValue(value, root, resolutionStack = []) {
@@ -1117,11 +1391,29 @@ function ensureOutputDirectory() {
 
 function run() {
   const checkOnly = process.argv.includes("--check");
+  const validateOnly = process.argv.includes("--validate");
+
+  if (checkOnly && validateOnly) {
+    throw new Error(
+      "Use either --check or --validate, not both"
+    );
+  }
 
   const rawTokens = readJson(TOKENS_PATH);
+
+  validateRawTokens(rawTokens);
+
   const resolvedTokens = resolveTokens(rawTokens);
+
+  validateResolvedTokens(resolvedTokens);
+
   const generatedTheme = buildCoherenceTheme(resolvedTokens);
   const generatedSource = serializeJson(generatedTheme);
+
+  if (validateOnly) {
+    console.log("K2 token architecture is valid.");
+    return;
+  }
 
   if (checkOnly) {
     if (!fs.existsSync(OUTPUT_PATH)) {

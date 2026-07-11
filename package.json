@@ -20,8 +20,9 @@
   ],
   "scripts": {
     "build": "node scripts/build.js",
+    "validate": "node scripts/build.js --validate",
     "check:themes": "node scripts/build.js --check",
-    "test": "npm run build && npm run check:themes"
+    "test": "npm run validate && npm run check:themes"
   },
   "contributes": {
     "themes": [
