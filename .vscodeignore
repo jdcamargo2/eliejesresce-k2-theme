@@ -1,0 +1,21 @@
+cat > .vscodeignore <<'EOF'
+.git/**
+.github/**
+.vscode/**
+node_modules/**
+
+design/**
+fixtures/**
+scripts/**
+tests/**
+test/**
+coverage/**
+.vscode-test/**
+.vscode-test-web/**
+
+.gitignore
+*.vsix
+*.log
+
+screenshots-local/**
+EOF

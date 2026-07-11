@@ -1,22 +1,39 @@
 {
   "name": "eliejesresce-k2-theme",
-  "displayName": "Eliejesresce K2",
-  "description": "A precise VS Code theme system designed to reveal structure, reduce visual noise and preserve semantic coherence.",
+  "displayName": "Eliejesresce K2 Themes",
+  "description": "A family of four dark VS Code themes designed for clarity, contrast, and long coding sessions.",
   "version": "3.0.0",
-  "publisher": "eliejesresce",
-  "engines": {
-    "vscode": "^1.70.0"
-  },
+  "publisher": "archimango",
+  "license": "MIT",
   "icon": "icon.png",
+
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jdcamargo2/eliejesresce-k2-theme.git"
+  },
+
+  "homepage": "https://github.com/jdcamargo2/eliejesresce-k2-theme#readme",
+
+  "bugs": {
+    "url": "https://github.com/jdcamargo2/eliejesresce-k2-theme/issues"
+  },
+
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+
   "categories": [
     "Themes"
   ],
+
   "keywords": [
     "theme",
     "dark theme",
-    "k2",
+    "pastel",
+    "high contrast",
     "quantum",
-    "semantic highlighting"
+    "coding",
+    "k2"
   ],
   "scripts": {
     "build": "node scripts/build.js",
@@ -48,5 +65,8 @@
         "path": "./themes/k2-endurance.json"
       }
     ]
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.9.2"
   }
 }
