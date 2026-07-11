@@ -10,6 +10,227 @@ const OUTPUT_PATH = path.join(ROOT_DIR, "themes", "k2-coherence.json");
 const REFERENCE_PATTERN = /^\{([a-zA-Z0-9_.-]+)\}$/;
 const HEX_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/;
 
+const REQUIRED_TOKEN_PATHS = [
+  "palette.black",
+
+  "semantic.contextStrong",
+  "semantic.context",
+  "semantic.contextSecondary",
+  "semantic.contextMuted",
+  "semantic.contextFaint",
+  "semantic.direction",
+  "semantic.structure",
+  "semantic.transformation",
+  "semantic.validData",
+  "semantic.attention",
+  "semantic.rupture",
+
+  "components.debug.toolbarBackground",
+  "components.debug.breakpoint",
+  "components.debug.breakpointDisabled",
+  "components.debug.currentLine",
+
+  "components.testing.passed",
+  "components.testing.failed",
+  "components.testing.queued",
+  "components.testing.skipped",
+  "components.testing.runAction",
+  "components.testing.passedBackground",
+  "components.testing.failedBackground",
+  "components.testing.queuedBackground",
+
+  "components.syntax.foreground",
+  "components.syntax.comment",
+  "components.syntax.keyword",
+  "components.syntax.keywordControl",
+  "components.syntax.operator",
+  "components.syntax.type",
+  "components.syntax.function",
+  "components.syntax.variable",
+  "components.syntax.property",
+  "components.syntax.string",
+  "components.syntax.number",
+  "components.syntax.invalid",
+
+  "components.brackets.orbit1",
+  "components.brackets.orbit2",
+  "components.brackets.orbit3",
+  "components.brackets.orbit4",
+  "components.brackets.orbit5",
+  "components.brackets.orbit6",
+  "components.brackets.unexpected",
+
+  "components.states.focus",
+  "components.states.information",
+  "components.states.modified",
+  "components.states.added",
+  "components.states.deleted",
+  "components.states.warning",
+  "components.states.error",
+
+  "components.terminal.background",
+  "components.terminal.foreground",
+  "components.terminal.cursor",
+  "components.terminal.black",
+  "components.terminal.brightBlack",
+  "components.terminal.red",
+  "components.terminal.brightRed",
+  "components.terminal.green",
+  "components.terminal.brightGreen",
+  "components.terminal.yellow",
+  "components.terminal.brightYellow",
+  "components.terminal.blue",
+  "components.terminal.brightBlue",
+  "components.terminal.magenta",
+  "components.terminal.brightMagenta",
+  "components.terminal.cyan",
+  "components.terminal.brightCyan",
+  "components.terminal.white",
+  "components.terminal.brightWhite",
+
+  "components.diff.insertedLine",
+  "components.diff.insertedText",
+  "components.diff.removedLine",
+  "components.diff.removedText",
+  "components.diff.modifiedLine",
+  "components.diff.conflict",
+
+  "variants.coherence.name",
+  "variants.coherence.type",
+  "variants.coherence.uiTheme",
+  "variants.coherence.surface.editor",
+  "variants.coherence.surface.sidebar",
+  "variants.coherence.surface.panel",
+  "variants.coherence.surface.overlay",
+  "variants.coherence.surface.border",
+  "variants.coherence.surface.focusBorder"
+];
+
+const REQUIRED_COHERENCE_SURFACES = [
+  "editor",
+  "editorElevated",
+  "sidebar",
+  "sidebarSection",
+  "activityBar",
+  "titleBar",
+  "statusBar",
+  "panel",
+  "overlay",
+  "overlayElevated",
+  "input",
+  "button",
+  "buttonHover",
+  "border",
+  "borderSubtle",
+  "focusBorder",
+  "selection",
+  "selectionInactive",
+  "lineHighlight",
+  "hover",
+  "active"
+];
+
+const CONTRAST_CONTRACTS = [
+  {
+    name: "Editor primary text",
+    foreground: "components.syntax.foreground",
+    background: "variants.coherence.surface.editor",
+    minimum: 4.5,
+    severity: "error"
+  },
+  {
+    name: "Sidebar primary text",
+    foreground: "semantic.contextSecondary",
+    background: "variants.coherence.surface.sidebar",
+    minimum: 4.5,
+    severity: "error"
+  },
+  {
+    name: "Input text",
+    foreground: "semantic.context",
+    background: "variants.coherence.surface.input",
+    minimum: 4.5,
+    severity: "error"
+  },
+  {
+    name: "Quick input text",
+    foreground: "semantic.context",
+    background: "variants.coherence.surface.overlay",
+    minimum: 4.5,
+    severity: "error"
+  },
+  {
+    name: "Button text",
+    foreground: "variants.coherence.surface.activityBar",
+    background: "variants.coherence.surface.button",
+    minimum: 3,
+    severity: "error"
+  },
+  {
+    name: "Comments",
+    foreground: "components.syntax.comment",
+    background: "variants.coherence.surface.editor",
+    minimum: 3,
+    severity: "warning"
+  },
+  {
+    name: "Line numbers",
+    foreground: "semantic.contextFaint",
+    background: "variants.coherence.surface.editor",
+    minimum: 3,
+    severity: "warning"
+  },
+  {
+    name: "Ghost text",
+    foreground: "semantic.contextFaint",
+    background: "variants.coherence.surface.editor",
+    minimum: 2.5,
+    severity: "warning"
+  },
+  {
+    name: "Inlay hints",
+    foreground: "semantic.contextMuted",
+    background: "variants.coherence.surface.editorElevated",
+    minimum: 3,
+    severity: "warning"
+  },
+  {
+    name: "Terminal primary text",
+    foreground: "components.terminal.foreground",
+    background: "components.terminal.background",
+    minimum: 4.5,
+    severity: "error"
+  },
+  {
+    name: "Terminal bright black",
+    foreground: "components.terminal.brightBlack",
+    background: "components.terminal.background",
+    minimum: 3,
+    severity: "warning"
+  },
+  {
+    name: "Terminal blue",
+    foreground: "components.terminal.blue",
+    background: "components.terminal.background",
+    minimum: 3,
+    severity: "warning"
+  },
+  {
+    name: "Terminal green",
+    foreground: "components.terminal.green",
+    background: "components.terminal.background",
+    minimum: 3,
+    severity: "warning"
+  },
+  {
+    name: "Terminal red",
+    foreground: "components.terminal.red",
+    background: "components.terminal.background",
+    minimum: 3,
+    severity: "warning"
+  },
+];
+
 function fail(message) {
   console.error(`K2 build failed: ${message}`);
   process.exitCode = 1;
@@ -48,6 +269,267 @@ function getValueByPath(root, referencePath) {
   }
 
   return current;
+}
+
+function isPlainObject(value) {
+  return (
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value)
+  );
+}
+
+function assertPlainObject(value, label) {
+  if (!isPlainObject(value)) {
+    throw new Error(`Expected "${label}" to be an object`);
+  }
+}
+
+function assertRequiredPaths(tokens) {
+  for (const tokenPath of REQUIRED_TOKEN_PATHS) {
+    getValueByPath(tokens, tokenPath);
+  }
+}
+
+function validatePalette(value, currentPath = ["palette"]) {
+  if (!isPlainObject(value)) {
+    throw new Error("Expected \"palette\" to be an object");
+  }
+
+  const entries = Object.entries(value);
+
+  if (entries.length === 0) {
+    throw new Error("Palette cannot be empty");
+  }
+
+  for (const [key, childValue] of entries) {
+    const childPath = [...currentPath, key];
+
+    if (isPlainObject(childValue)) {
+      validatePalette(childValue, childPath);
+      continue;
+    }
+
+    if (
+      typeof childValue !== "string" ||
+      !HEX_COLOR_PATTERN.test(childValue)
+    ) {
+      throw new Error(
+        `Palette token "${childPath.join(".")}" must be a valid ` +
+        `#RRGGBB or #RRGGBBAA color`
+      );
+    }
+  }
+}
+
+function assertNoRawColorsOutsidePalette(value, currentPath = []) {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => {
+      assertNoRawColorsOutsidePalette(
+        item,
+        [...currentPath, String(index)]
+      );
+    });
+
+    return;
+  }
+
+  if (isPlainObject(value)) {
+    for (const [key, childValue] of Object.entries(value)) {
+      assertNoRawColorsOutsidePalette(
+        childValue,
+        [...currentPath, key]
+      );
+    }
+
+    return;
+  }
+
+  if (
+    typeof value === "string" &&
+    HEX_COLOR_PATTERN.test(value) &&
+    currentPath[0] !== "palette"
+  ) {
+    throw new Error(
+      `Raw color outside palette at "${currentPath.join(".")}": ` +
+      `${value}. Use a token reference instead.`
+    );
+  }
+}
+
+function assertNoUnresolvedReferences(value, currentPath = []) {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => {
+      assertNoUnresolvedReferences(
+        item,
+        [...currentPath, String(index)]
+      );
+    });
+
+    return;
+  }
+
+  if (isPlainObject(value)) {
+    for (const [key, childValue] of Object.entries(value)) {
+      assertNoUnresolvedReferences(
+        childValue,
+        [...currentPath, key]
+      );
+    }
+
+    return;
+  }
+
+  if (
+    typeof value === "string" &&
+    REFERENCE_PATTERN.test(value)
+  ) {
+    throw new Error(
+      `Unresolved token reference at "${currentPath.join(".")}": ` +
+      value
+    );
+  }
+}
+
+function validateCoherenceVariant(tokens) {
+  const variant = tokens.variants.coherence;
+
+  assertPlainObject(variant, "variants.coherence");
+  assertPlainObject(
+    variant.surface,
+    "variants.coherence.surface"
+  );
+
+  if (variant.name !== "K2 Coherence") {
+    throw new Error(
+      `Expected variants.coherence.name to be "K2 Coherence"`
+    );
+  }
+
+  if (variant.type !== "dark") {
+    throw new Error(
+      `Expected variants.coherence.type to be "dark"`
+    );
+  }
+
+  if (variant.uiTheme !== "vs-dark") {
+    throw new Error(
+      `Expected variants.coherence.uiTheme to be "vs-dark"`
+    );
+  }
+
+  for (const surfaceName of REQUIRED_COHERENCE_SURFACES) {
+    if (
+      !Object.prototype.hasOwnProperty.call(
+        variant.surface,
+        surfaceName
+      )
+    ) {
+      throw new Error(
+        `Missing required Coherence surface: ` +
+        `variants.coherence.surface.${surfaceName}`
+      );
+    }
+  }
+}
+
+function validateRawTokens(tokens) {
+  assertPlainObject(tokens, "tokens");
+  assertPlainObject(tokens.palette, "palette");
+  assertPlainObject(tokens.semantic, "semantic");
+  assertPlainObject(tokens.components, "components");
+  assertPlainObject(tokens.variants, "variants");
+
+  assertPlainObject(
+    tokens.components.syntax,
+    "components.syntax"
+  );
+  assertPlainObject(
+    tokens.components.brackets,
+    "components.brackets"
+  );
+  assertPlainObject(
+    tokens.components.states,
+    "components.states"
+  );
+
+  validatePalette(tokens.palette);
+  assertRequiredPaths(tokens);
+  assertNoRawColorsOutsidePalette(tokens);
+  validateCoherenceVariant(tokens);
+}
+
+function validateResolvedTokens(tokens) {
+  assertNoUnresolvedReferences(tokens);
+
+  validatePalette(tokens.palette);
+  validateCoherenceVariant(tokens);
+}
+
+function validateContrastContracts(tokens) {
+  const warnings = [];
+  const failures = [];
+
+  for (const contract of CONTRAST_CONTRACTS) {
+    const foreground = getValueByPath(
+      tokens,
+      contract.foreground
+    );
+
+    const background = getValueByPath(
+      tokens,
+      contract.background
+    );
+
+    assertColor(
+      foreground,
+      `contrast.${contract.name}.foreground`
+    );
+
+    assertColor(
+      background,
+      `contrast.${contract.name}.background`
+    );
+
+    const ratio = contrastRatio(
+      foreground,
+      background
+    );
+
+    const formattedRatio = ratio.toFixed(2);
+
+    if (ratio >= contract.minimum) {
+      continue;
+    }
+
+    const message =
+      `${contract.name}: ${formattedRatio}:1 ` +
+      `(minimum ${contract.minimum}:1) — ` +
+      `${foreground} on ${background}`;
+
+    if (contract.severity === "error") {
+      failures.push(message);
+    } else {
+      warnings.push(message);
+    }
+  }
+
+  if (warnings.length > 0) {
+    console.warn("K2 contrast warnings:");
+
+    for (const warning of warnings) {
+      console.warn(`  - ${warning}`);
+    }
+  }
+
+  if (failures.length > 0) {
+    throw new Error(
+      [
+        "Critical contrast contract failed:",
+        ...failures.map((failure) => `  - ${failure}`)
+      ].join("\n")
+    );
+  }
 }
 
 function resolveValue(value, root, resolutionStack = []) {
@@ -106,6 +588,121 @@ function assertColor(value, label) {
   return value.toUpperCase();
 }
 
+function hexToRgba(hexColor) {
+  const normalized = hexColor.slice(1);
+
+  if (normalized.length !== 6 && normalized.length !== 8) {
+    throw new Error(
+      `Unsupported color format for contrast calculation: ${hexColor}`
+    );
+  }
+
+  const red = Number.parseInt(normalized.slice(0, 2), 16);
+  const green = Number.parseInt(normalized.slice(2, 4), 16);
+  const blue = Number.parseInt(normalized.slice(4, 6), 16);
+
+  const alpha =
+    normalized.length === 8
+      ? Number.parseInt(normalized.slice(6, 8), 16) / 255
+      : 1;
+
+  return {
+    red,
+    green,
+    blue,
+    alpha
+  };
+}
+
+function compositeChannel(foreground, background, alpha) {
+  return Math.round(
+    foreground * alpha + background * (1 - alpha)
+  );
+}
+
+function compositeColors(foregroundHex, backgroundHex) {
+  const foreground = hexToRgba(foregroundHex);
+  const background = hexToRgba(backgroundHex);
+
+  if (background.alpha !== 1) {
+    throw new Error(
+      `Contrast background must be opaque: ${backgroundHex}`
+    );
+  }
+
+  if (foreground.alpha === 1) {
+    return foregroundHex;
+  }
+
+  const red = compositeChannel(
+    foreground.red,
+    background.red,
+    foreground.alpha
+  );
+
+  const green = compositeChannel(
+    foreground.green,
+    background.green,
+    foreground.alpha
+  );
+
+  const blue = compositeChannel(
+    foreground.blue,
+    background.blue,
+    foreground.alpha
+  );
+
+  return `#${[red, green, blue]
+    .map((channel) =>
+      channel.toString(16).padStart(2, "0")
+    )
+    .join("")
+    .toUpperCase()}`;
+}
+
+function srgbChannelToLinear(channel) {
+  const normalized = channel / 255;
+
+  return normalized <= 0.04045
+    ? normalized / 12.92
+    : Math.pow((normalized + 0.055) / 1.055, 2.4);
+}
+
+function relativeLuminance(hexColor) {
+  const { red, green, blue } = hexToRgba(hexColor);
+
+  return (
+    0.2126 * srgbChannelToLinear(red) +
+    0.7152 * srgbChannelToLinear(green) +
+    0.0722 * srgbChannelToLinear(blue)
+  );
+}
+
+function contrastRatio(foregroundHex, backgroundHex) {
+  const opaqueForeground = compositeColors(
+    foregroundHex,
+    backgroundHex
+  );
+
+  const foregroundLuminance =
+    relativeLuminance(opaqueForeground);
+
+  const backgroundLuminance =
+    relativeLuminance(backgroundHex);
+
+  const lighter = Math.max(
+    foregroundLuminance,
+    backgroundLuminance
+  );
+
+  const darker = Math.min(
+    foregroundLuminance,
+    backgroundLuminance
+  );
+
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 function createTokenColor(name, scope, foreground, fontStyle) {
   const settings = {
     foreground: assertColor(foreground, `tokenColors.${name}`)
@@ -127,6 +724,10 @@ function buildCoherenceTheme(tokens) {
   const syntax = tokens.components.syntax;
   const brackets = tokens.components.brackets;
   const states = tokens.components.states;
+  const terminal = tokens.components.terminal;
+  const diff = tokens.components.diff;
+  const debug = tokens.components.debug;
+  const testing = tokens.components.testing;
 
   if (!variant || !variant.surface) {
     throw new Error("Missing variants.coherence configuration");
@@ -135,6 +736,375 @@ function buildCoherenceTheme(tokens) {
   const surface = variant.surface;
 
   const colors = {
+    "menu.background": assertColor(
+      surface.overlay,
+      "menu.background"
+    ),
+
+    "menu.foreground": assertColor(
+      tokens.semantic.context,
+      "menu.foreground"
+    ),
+
+    "menu.selectionBackground": assertColor(
+      surface.active,
+      "menu.selectionBackground"
+    ),
+
+    "menu.selectionForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "menu.selectionForeground"
+    ),
+
+    "menu.separatorBackground": assertColor(
+      surface.border,
+      "menu.separatorBackground"
+    ),
+
+    "commandCenter.background": assertColor(
+      surface.input,
+      "commandCenter.background"
+    ),
+
+    "commandCenter.foreground": assertColor(
+      tokens.semantic.contextSecondary,
+      "commandCenter.foreground"
+    ),
+
+    "commandCenter.activeBackground": assertColor(
+      surface.active,
+      "commandCenter.activeBackground"
+    ),
+
+    "commandCenter.activeForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "commandCenter.activeForeground"
+    ),
+
+    "commandCenter.border": assertColor(
+      surface.border,
+      "commandCenter.border"
+    ),
+
+    "notificationCenter.border": assertColor(
+      surface.border,
+      "notificationCenter.border"
+    ),
+
+    "notificationCenterHeader.background": assertColor(
+      surface.overlay,
+      "notificationCenterHeader.background"
+    ),
+
+    "notificationCenterHeader.foreground": assertColor(
+      tokens.semantic.contextStrong,
+      "notificationCenterHeader.foreground"
+    ),
+
+    "notifications.background": assertColor(
+      surface.overlay,
+      "notifications.background"
+    ),
+
+    "notifications.foreground": assertColor(
+      tokens.semantic.context,
+      "notifications.foreground"
+    ),
+
+    "notifications.border": assertColor(
+      surface.border,
+      "notifications.border"
+    ),
+
+    "notificationLink.foreground": assertColor(
+      tokens.semantic.directionStrong,
+      "notificationLink.foreground"
+    ),
+    "scrollbar.shadow": assertColor(
+      tokens.palette.black,
+      "scrollbar.shadow"
+    ),
+
+    "scrollbarSlider.background": assertColor(
+      tokens.palette.scrollbarThumb,
+      "scrollbarSlider.background"
+    ),
+
+    "scrollbarSlider.hoverBackground": assertColor(
+      tokens.palette.scrollbarThumbHover,
+      "scrollbarSlider.hoverBackground"
+    ),
+
+    "scrollbarSlider.activeBackground": assertColor(
+      tokens.palette.scrollbarThumbActive,
+      "scrollbarSlider.activeBackground"
+    ),
+
+    "minimap.selectionHighlight": assertColor(
+      tokens.palette.minimapSelection,
+      "minimap.selectionHighlight"
+    ),
+
+    "minimap.errorHighlight": assertColor(
+      tokens.palette.minimapError,
+      "minimap.errorHighlight"
+    ),
+
+    "minimap.warningHighlight": assertColor(
+      tokens.palette.minimapWarning,
+      "minimap.warningHighlight"
+    ),
+
+    "minimap.infoHighlight": assertColor(
+      tokens.palette.minimapInfo,
+      "minimap.infoHighlight"
+    ),
+
+    "minimap.findMatchHighlight": assertColor(
+      surface.selection,
+      "minimap.findMatchHighlight"
+    ),
+
+    "minimapGutter.addedBackground": assertColor(
+      states.added,
+      "minimapGutter.addedBackground"
+    ),
+
+    "minimapGutter.modifiedBackground": assertColor(
+      states.modified,
+      "minimapGutter.modifiedBackground"
+    ),
+
+    "minimapGutter.deletedBackground": assertColor(
+      states.deleted,
+      "minimapGutter.deletedBackground"
+    ),
+    "peekView.border": assertColor(
+      states.focus,
+      "peekView.border"
+    ),
+
+    "peekViewEditor.background": assertColor(
+      surface.editor,
+      "peekViewEditor.background"
+    ),
+
+    "peekViewEditor.matchHighlightBackground": assertColor(
+      surface.selection,
+      "peekViewEditor.matchHighlightBackground"
+    ),
+
+    "peekViewResult.background": assertColor(
+      surface.sidebar,
+      "peekViewResult.background"
+    ),
+
+    "peekViewResult.fileForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "peekViewResult.fileForeground"
+    ),
+
+    "peekViewResult.lineForeground": assertColor(
+      tokens.semantic.contextMuted,
+      "peekViewResult.lineForeground"
+    ),
+
+    "peekViewResult.matchHighlightBackground": assertColor(
+      surface.selectionInactive,
+      "peekViewResult.matchHighlightBackground"
+    ),
+
+    "peekViewResult.selectionBackground": assertColor(
+      surface.active,
+      "peekViewResult.selectionBackground"
+    ),
+
+    "peekViewResult.selectionForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "peekViewResult.selectionForeground"
+    ),
+
+    "peekViewTitle.background": assertColor(
+      surface.overlay,
+      "peekViewTitle.background"
+    ),
+
+    "peekViewTitleDescription.foreground": assertColor(
+      tokens.semantic.contextMuted,
+      "peekViewTitleDescription.foreground"
+    ),
+
+    "peekViewTitleLabel.foreground": assertColor(
+      tokens.semantic.contextStrong,
+      "peekViewTitleLabel.foreground"
+    ),
+    "notebook.editorBackground": assertColor(
+      surface.editor,
+      "notebook.editorBackground"
+    ),
+
+    "notebook.cellEditorBackground": assertColor(
+      surface.editorElevated,
+      "notebook.cellEditorBackground"
+    ),
+
+    "notebook.cellBorderColor": assertColor(
+      surface.borderSubtle,
+      "notebook.cellBorderColor"
+    ),
+
+    "notebook.focusedCellBorder": assertColor(
+      states.focus,
+      "notebook.focusedCellBorder"
+    ),
+
+    "notebook.selectedCellBorder": assertColor(
+      surface.border,
+      "notebook.selectedCellBorder"
+    ),
+
+    "notebook.inactiveFocusedCellBorder": assertColor(
+      surface.borderSubtle,
+      "notebook.inactiveFocusedCellBorder"
+    ),
+
+    "notebook.cellStatusBarItemHoverBackground": assertColor(
+      surface.hover,
+      "notebook.cellStatusBarItemHoverBackground"
+    ),
+
+    "notebook.outputContainerBackgroundColor": assertColor(
+      surface.panel,
+      "notebook.outputContainerBackgroundColor"
+    ),
+
+    "notebookScrollbarSlider.background": assertColor(
+      tokens.palette.scrollbarThumb,
+      "notebookScrollbarSlider.background"
+    ),
+
+    "notebookScrollbarSlider.hoverBackground": assertColor(
+      tokens.palette.scrollbarThumbHover,
+      "notebookScrollbarSlider.hoverBackground"
+    ),
+
+    "notebookScrollbarSlider.activeBackground": assertColor(
+      tokens.palette.scrollbarThumbActive,
+      "notebookScrollbarSlider.activeBackground"
+    ),
+    "testing.iconPassed": assertColor(
+      testing.passed,
+      "testing.iconPassed"
+    ),
+
+    "testing.iconFailed": assertColor(
+      testing.failed,
+      "testing.iconFailed"
+    ),
+
+    "testing.iconErrored": assertColor(
+      testing.failed,
+      "testing.iconErrored"
+    ),
+
+    "testing.iconQueued": assertColor(
+      testing.queued,
+      "testing.iconQueued"
+    ),
+
+    "testing.iconSkipped": assertColor(
+      testing.skipped,
+      "testing.iconSkipped"
+    ),
+
+    "testing.iconUnset": assertColor(
+      tokens.semantic.contextMuted,
+      "testing.iconUnset"
+    ),
+
+    "testing.runAction": assertColor(
+      testing.runAction,
+      "testing.runAction"
+    ),
+
+    "testing.coverCountBadgeBackground": assertColor(
+      surface.active,
+      "testing.coverCountBadgeBackground"
+    ),
+
+    "testing.coverCountBadgeForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "testing.coverCountBadgeForeground"
+    ),
+
+    "testing.coveredBackground": assertColor(
+      testing.passedBackground,
+      "testing.coveredBackground"
+    ),
+
+    "testing.uncoveredBackground": assertColor(
+      testing.failedBackground,
+      "testing.uncoveredBackground"
+    ),
+    "debugToolBar.background": assertColor(
+      debug.toolbarBackground,
+      "debugToolBar.background"
+    ),
+
+    "debugToolBar.border": assertColor(
+      surface.border,
+      "debugToolBar.border"
+    ),
+
+    "editor.stackFrameHighlightBackground": assertColor(
+      debug.currentLine,
+      "editor.stackFrameHighlightBackground"
+    ),
+
+    "editor.focusedStackFrameHighlightBackground": assertColor(
+      surface.selectionInactive,
+      "editor.focusedStackFrameHighlightBackground"
+    ),
+
+    "debugIcon.breakpointForeground": assertColor(
+      debug.breakpoint,
+      "debugIcon.breakpointForeground"
+    ),
+
+    "debugIcon.breakpointDisabledForeground": assertColor(
+      debug.breakpointDisabled,
+      "debugIcon.breakpointDisabledForeground"
+    ),
+
+    "debugIcon.breakpointCurrentStackframeForeground": assertColor(
+      states.warning,
+      "debugIcon.breakpointCurrentStackframeForeground"
+    ),
+
+    "debugIcon.startForeground": assertColor(
+      states.added,
+      "debugIcon.startForeground"
+    ),
+
+    "debugIcon.pauseForeground": assertColor(
+      states.warning,
+      "debugIcon.pauseForeground"
+    ),
+
+    "debugIcon.stopForeground": assertColor(
+      states.error,
+      "debugIcon.stopForeground"
+    ),
+
+    "debugIcon.disconnectForeground": assertColor(
+      states.error,
+      "debugIcon.disconnectForeground"
+    ),
+
+    "debugIcon.restartForeground": assertColor(
+      states.information,
+      "debugIcon.restartForeground"
+    ),
     "foreground": assertColor(
       tokens.semantic.contextSecondary,
       "foreground"
@@ -494,7 +1464,7 @@ function buildCoherenceTheme(tokens) {
       "button.background"
     ),
     "button.foreground": assertColor(
-      tokens.semantic.contextStrong,
+      surface.activityBar,
       "button.foreground"
     ),
     "button.hoverBackground": assertColor(
@@ -615,6 +1585,223 @@ function buildCoherenceTheme(tokens) {
       "editorGutter.deletedBackground"
     ),
 
+    "terminal.background": assertColor(
+      terminal.background,
+      "terminal.background"
+    ),
+    "terminal.foreground": assertColor(
+      terminal.foreground,
+      "terminal.foreground"
+    ),
+    "terminalCursor.foreground": assertColor(
+      terminal.cursor,
+      "terminalCursor.foreground"
+    ),
+    "terminalCursor.background": assertColor(
+      surface.panel,
+      "terminalCursor.background"
+    ),
+
+    "terminal.ansiBlack": assertColor(
+      terminal.black,
+      "terminal.ansiBlack"
+    ),
+    "terminal.ansiBrightBlack": assertColor(
+      terminal.brightBlack,
+      "terminal.ansiBrightBlack"
+    ),
+
+    "terminal.ansiRed": assertColor(
+      terminal.red,
+      "terminal.ansiRed"
+    ),
+    "terminal.ansiBrightRed": assertColor(
+      terminal.brightRed,
+      "terminal.ansiBrightRed"
+    ),
+
+    "terminal.ansiGreen": assertColor(
+      terminal.green,
+      "terminal.ansiGreen"
+    ),
+    "terminal.ansiBrightGreen": assertColor(
+      terminal.brightGreen,
+      "terminal.ansiBrightGreen"
+    ),
+
+    "terminal.ansiYellow": assertColor(
+      terminal.yellow,
+      "terminal.ansiYellow"
+    ),
+    "terminal.ansiBrightYellow": assertColor(
+      terminal.brightYellow,
+      "terminal.ansiBrightYellow"
+    ),
+
+    "terminal.ansiBlue": assertColor(
+      terminal.blue,
+      "terminal.ansiBlue"
+    ),
+    "terminal.ansiBrightBlue": assertColor(
+      terminal.brightBlue,
+      "terminal.ansiBrightBlue"
+    ),
+
+    "terminal.ansiMagenta": assertColor(
+      terminal.magenta,
+      "terminal.ansiMagenta"
+    ),
+    "terminal.ansiBrightMagenta": assertColor(
+      terminal.brightMagenta,
+      "terminal.ansiBrightMagenta"
+    ),
+
+    "terminal.ansiCyan": assertColor(
+      terminal.cyan,
+      "terminal.ansiCyan"
+    ),
+    "terminal.ansiBrightCyan": assertColor(
+      terminal.brightCyan,
+      "terminal.ansiBrightCyan"
+    ),
+
+    "terminal.ansiWhite": assertColor(
+      terminal.white,
+      "terminal.ansiWhite"
+    ),
+    "terminal.ansiBrightWhite": assertColor(
+      terminal.brightWhite,
+      "terminal.ansiBrightWhite"
+    ),
+
+    "terminal.selectionBackground": assertColor(
+      surface.selection,
+      "terminal.selectionBackground"
+    ),
+
+    "terminal.border": assertColor(
+      surface.border,
+      "terminal.border"
+    ),
+
+    "editorError.foreground": assertColor(
+      states.error,
+      "editorError.foreground"
+    ),
+    "editorError.border": assertColor(
+      tokens.palette.transparent,
+      "editorError.border"
+    ),
+
+    "editorWarning.foreground": assertColor(
+      states.warning,
+      "editorWarning.foreground"
+    ),
+    "editorWarning.border": assertColor(
+      tokens.palette.transparent,
+      "editorWarning.border"
+    ),
+
+    "editorInfo.foreground": assertColor(
+      states.information,
+      "editorInfo.foreground"
+    ),
+    "editorInfo.border": assertColor(
+      tokens.palette.transparent,
+      "editorInfo.border"
+    ),
+
+    "editorHint.foreground": assertColor(
+      tokens.semantic.contextMuted,
+      "editorHint.foreground"
+    ),
+    "editorHint.border": assertColor(
+      tokens.palette.transparent,
+      "editorHint.border"
+    ),
+
+    "problemsErrorIcon.foreground": assertColor(
+      states.error,
+      "problemsErrorIcon.foreground"
+    ),
+    "problemsWarningIcon.foreground": assertColor(
+      states.warning,
+      "problemsWarningIcon.foreground"
+    ),
+    "problemsInfoIcon.foreground": assertColor(
+      states.information,
+      "problemsInfoIcon.foreground"
+    ),
+
+    "diffEditor.insertedLineBackground": assertColor(
+      diff.insertedLine,
+      "diffEditor.insertedLineBackground"
+    ),
+    "diffEditor.insertedTextBackground": assertColor(
+      diff.insertedText,
+      "diffEditor.insertedTextBackground"
+    ),
+
+    "diffEditor.removedLineBackground": assertColor(
+      diff.removedLine,
+      "diffEditor.removedLineBackground"
+    ),
+    "diffEditor.removedTextBackground": assertColor(
+      diff.removedText,
+      "diffEditor.removedTextBackground"
+    ),
+
+    "diffEditor.diagonalFill": assertColor(
+      surface.borderSubtle,
+      "diffEditor.diagonalFill"
+    ),
+
+    "diffEditor.border": assertColor(
+      surface.border,
+      "diffEditor.border"
+    ),
+
+    "diffEditorGutter.insertedLineBackground": assertColor(
+      states.added,
+      "diffEditorGutter.insertedLineBackground"
+    ),
+    "diffEditorGutter.removedLineBackground": assertColor(
+      states.deleted,
+      "diffEditorGutter.removedLineBackground"
+    ),
+
+    "merge.currentHeaderBackground": assertColor(
+      diff.modifiedLine,
+      "merge.currentHeaderBackground"
+    ),
+    "merge.currentContentBackground": assertColor(
+      surface.selectionInactive,
+      "merge.currentContentBackground"
+    ),
+
+    "merge.incomingHeaderBackground": assertColor(
+      diff.insertedLine,
+      "merge.incomingHeaderBackground"
+    ),
+    "merge.incomingContentBackground": assertColor(
+      diff.insertedText,
+      "merge.incomingContentBackground"
+    ),
+
+    "merge.commonHeaderBackground": assertColor(
+      diff.conflict,
+      "merge.commonHeaderBackground"
+    ),
+    "merge.commonContentBackground": assertColor(
+      diff.conflict,
+      "merge.commonContentBackground"
+    ),
+
+    "merge.border": assertColor(
+      states.warning,
+      "merge.border"
+    ),
+
     "gitDecoration.modifiedResourceForeground": assertColor(
       states.modified,
       "gitDecoration.modifiedResourceForeground"
@@ -638,6 +1825,260 @@ function buildCoherenceTheme(tokens) {
   };
 
   const tokenColors = [
+    createTokenColor(
+      "Python self and cls",
+      [
+        "variable.language.special.self.python",
+        "variable.parameter.function.language.special.self.python",
+        "variable.parameter.function.language.special.cls.python"
+      ],
+      syntax.selfReference
+    ),
+
+    createTokenColor(
+      "Python special methods",
+      [
+        "entity.name.function.magic.python"
+      ],
+      syntax.specialMethod
+    ),
+
+    createTokenColor(
+      "Python built-ins",
+      [
+        "support.function.builtin.python",
+        "support.type.python",
+        "support.variable.python"
+      ],
+      syntax.pythonBuiltin
+    ),
+
+    createTokenColor(
+      "Python exceptions",
+      [
+        "support.type.exception.python",
+        "entity.name.type.exception.python"
+      ],
+      syntax.exception
+    ),
+
+    createTokenColor(
+      "Python decorators",
+      [
+        "meta.function.decorator.python",
+        "entity.name.function.decorator.python",
+        "punctuation.definition.decorator.python"
+      ],
+      syntax.decorator
+    ),
+    createTokenColor(
+      "Java package and import keywords",
+      [
+        "keyword.other.package.java",
+        "keyword.control.import.java"
+      ],
+      syntax.import
+    ),
+
+    createTokenColor(
+      "Java declaration keywords",
+      [
+        "storage.type.class.java",
+        "storage.type.interface.java",
+        "storage.type.enum.java",
+        "storage.type.record.java"
+      ],
+      syntax.declaration
+    ),
+    createTokenColor(
+      "Java primitive types",
+      [
+        "storage.type.primitive.java"
+      ],
+      syntax.type
+    ),
+    createTokenColor(
+      "Java annotations",
+      [
+        "storage.type.annotation.java",
+        "meta.declaration.annotation.java",
+        "entity.name.type.annotation.java"
+      ],
+      syntax.decorator
+    ),
+
+    createTokenColor(
+      "Java constructors",
+      [
+        "entity.name.function.constructor.java",
+        "meta.method.identifier.java"
+      ],
+      syntax.constructor
+    ),
+
+    createTokenColor(
+      "Java constants",
+      [
+        "variable.other.constant.java",
+        "constant.other.java"
+      ],
+      syntax.constant
+    ),
+
+    createTokenColor(
+      "Java primitive types",
+      [
+        "storage.type.primitive.java",
+        "storage.type.java"
+      ],
+      syntax.type
+    ),
+    createTokenColor(
+      "Import and export keywords",
+      [
+        "keyword.control.import",
+        "keyword.control.export",
+        "keyword.control.from",
+        "keyword.control.as"
+      ],
+      syntax.import
+    ),
+
+    createTokenColor(
+      "Module and package paths",
+      [
+        "entity.name.module",
+        "support.module",
+        "string.quoted.module"
+      ],
+      syntax.modulePath
+    ),
+
+    createTokenColor(
+      "Constructors",
+      [
+        "entity.name.function.constructor",
+        "meta.function.constructor",
+        "support.class"
+      ],
+      syntax.constructor
+    ),
+
+    createTokenColor(
+      "Built-in objects",
+      [
+        "support.class",
+        "support.type",
+        "support.variable",
+        "support.constant"
+      ],
+      syntax.builtin
+    ),
+
+    createTokenColor(
+      "Regular expressions",
+      [
+        "string.regexp",
+        "string.regexp.js",
+        "string.regexp.ts"
+      ],
+      syntax.regex
+    ),
+    createTokenColor(
+      "Environment variable keys",
+      [
+        "variable.other.env",
+        "variable.other.assignment.env",
+        "entity.name.variable.env"
+      ],
+      syntax.environmentKey
+    ),
+
+    createTokenColor(
+      "Environment variable values",
+      [
+        "string.unquoted.env",
+        "string.quoted.double.env",
+        "string.quoted.single.env"
+      ],
+      syntax.string
+    ),
+    createTokenColor(
+      "YAML property keys",
+      [
+        "entity.name.tag.yaml",
+        "meta.mapping.key.yaml string.unquoted.plain.out.yaml",
+        "meta.mapping.key.yaml string.unquoted.plain.in.yaml"
+      ],
+      syntax.dataKey
+    ),
+    createTokenColor(
+      "YAML plain values",
+      [
+        "meta.mapping.value.yaml string.unquoted.plain.out.yaml",
+        "meta.mapping.value.yaml string.unquoted.plain.in.yaml",
+        "meta.block.mapping.value.yaml string.unquoted.plain.out.yaml"
+      ],
+      syntax.dataValue
+    ),
+    createTokenColor(
+      "YAML anchors",
+      [
+        "entity.name.type.anchor.yaml",
+        "variable.other.anchor.yaml"
+      ],
+      syntax.yamlAnchor
+    ),
+
+    createTokenColor(
+      "YAML aliases",
+      [
+        "variable.other.alias.yaml"
+      ],
+      syntax.yamlAlias
+    ),
+
+    createTokenColor(
+      "YAML constants",
+      [
+        "constant.language.yaml",
+        "constant.numeric.yaml"
+      ],
+      syntax.constant
+    ),
+    createTokenColor(
+      "JSON property keys",
+      [
+        "support.type.property-name.json"
+      ],
+      syntax.dataKey
+    ),
+    createTokenColor(
+      "JSON string values",
+      [
+        "meta.structure.dictionary.value.json string.quoted.double.json",
+        "meta.structure.array.json string.quoted.double.json"
+      ],
+      syntax.string
+    ),
+    createTokenColor(
+      "JSON constants",
+      [
+        "constant.language.json"
+      ],
+      syntax.constant
+    ),
+
+    createTokenColor(
+      "JSON punctuation",
+      [
+        "punctuation.support.type.property-name.begin.json",
+        "punctuation.support.type.property-name.end.json",
+        "punctuation.separator.dictionary.key-value.json",
+        "punctuation.separator.dictionary.pair.json"
+      ],
+      syntax.punctuation
+    ),
     createTokenColor(
       "Markdown headings",
       [
@@ -803,6 +2244,22 @@ function buildCoherenceTheme(tokens) {
     ),
 
     createTokenColor(
+      "Java package paths",
+      [
+        "meta.package.java storage.modifier.package.java"
+      ],
+      syntax.modulePath
+    ),
+
+    createTokenColor(
+      "Java import paths",
+      [
+        "meta.import.java storage.modifier.import.java"
+      ],
+      syntax.modulePath
+    ),
+
+    createTokenColor(
       "Control flow",
       [
         "keyword.control",
@@ -829,16 +2286,187 @@ function buildCoherenceTheme(tokens) {
     ),
 
     createTokenColor(
-      "Types",
+      "TypeScript declaration keywords",
+      [
+        "storage.type.interface.ts",
+        "storage.type.class.ts",
+        "storage.type.enum.ts",
+        "storage.type.type.ts",
+        "storage.type.namespace.ts",
+        "storage.type.interface.tsx",
+        "storage.type.class.tsx"
+      ],
+      syntax.declaration
+    ),
+
+    createTokenColor(
+      "TypeScript type names",
+      [
+        "entity.name.type.interface.ts",
+        "entity.name.type.class.ts",
+        "entity.name.type.alias.ts",
+        "entity.name.type.enum.ts",
+        "entity.name.type.interface.tsx",
+        "entity.name.type.class.tsx"
+      ],
+      syntax.type
+    ),
+
+    createTokenColor(
+      "Rust declaration keywords",
+      [
+        "storage.type.struct.rust",
+        "storage.type.enum.rust",
+        "storage.type.trait.rust",
+        "storage.type.type.rust",
+        "storage.type.union.rust"
+      ],
+      syntax.declaration
+    ),
+
+    createTokenColor(
+      "Rust types",
+      [
+        "entity.name.type.struct.rust",
+        "entity.name.type.enum.rust",
+        "entity.name.type.trait.rust",
+        "entity.name.type.rust",
+        "support.type.rust",
+        "storage.type.numeric.rust",
+        "storage.type.primitive.rust"
+      ],
+      syntax.type
+    ),
+
+    createTokenColor(
+      "Rust functions",
+      [
+        "entity.name.function.rust",
+        "meta.function.call.rust entity.name.function.rust"
+      ],
+      syntax.function
+    ),
+
+    createTokenColor(
+      "Rust macros",
+      [
+        "entity.name.function.macro.rust",
+        "support.macro.rust",
+        "meta.macro.rust"
+      ],
+      syntax.macro
+    ),
+
+    createTokenColor(
+      "Rust lifetimes",
+      [
+        "entity.name.type.lifetime.rust",
+        "storage.modifier.lifetime.rust",
+        "variable.other.lifetime.rust"
+      ],
+      syntax.lifetime
+    ),
+
+    createTokenColor(
+      "Rust module paths",
+      [
+        "entity.name.namespace.rust",
+        "entity.name.module.rust",
+        "meta.use.rust entity.name.namespace.rust"
+      ],
+      syntax.modulePath
+    ),
+
+    createTokenColor(
+      "Rust constants",
+      [
+        "variable.other.constant.rust",
+        "constant.other.rust"
+      ],
+      syntax.constant
+    ),
+
+    createTokenColor(
+      "C preprocessor directives",
+      [
+        "meta.preprocessor.c",
+        "keyword.control.directive.c",
+        "keyword.control.import.c",
+        "punctuation.definition.directive.c"
+      ],
+      syntax.preprocessor
+    ),
+
+    createTokenColor(
+      "C primitive types",
+      [
+        "storage.type.c",
+        "storage.type.built-in.c",
+        "support.type.c"
+      ],
+      syntax.type
+    ),
+
+    createTokenColor(
+      "C functions",
+      [
+        "entity.name.function.c",
+        "meta.function.c entity.name.function.c"
+      ],
+      syntax.function
+    ),
+
+    createTokenColor(
+      "C constants",
+      [
+        "constant.other.c",
+        "variable.other.constant.c"
+      ],
+      syntax.constant
+    ),
+
+    createTokenColor(
+      "C labels",
+      [
+        "entity.name.label.c"
+      ],
+      syntax.label
+    ),
+
+    createTokenColor(
+      "C header paths",
+      [
+        "string.quoted.other.lt-gt.include.c",
+        "string.quoted.double.include.c"
+      ],
+      syntax.modulePath
+    ),
+
+    createTokenColor(
+      "Named types",
       [
         "entity.name.type",
         "entity.name.class",
         "entity.name.interface",
         "entity.name.struct",
-        "support.type",
-        "storage.type"
+        "entity.name.enum",
+        "support.type"
       ],
       syntax.type
+    ),
+
+    createTokenColor(
+      "Type declaration keywords",
+      [
+        "storage.type.class",
+        "storage.type.interface",
+        "storage.type.struct",
+        "storage.type.enum",
+        "storage.type.trait",
+        "storage.type.union",
+        "storage.type.record"
+      ],
+      syntax.declaration
     ),
 
     createTokenColor(
@@ -1003,6 +2631,111 @@ function buildCoherenceTheme(tokens) {
   ];
 
   const semanticTokenColors = {
+    "class:java": assertColor(
+      syntax.type,
+      "semanticTokenColors.class:java"
+    ),
+    "namespace:java": assertColor(
+      syntax.modulePath,
+      "semanticTokenColors.namespace:java"
+    ),
+
+    "class.defaultLibrary:java": assertColor(
+      syntax.builtin,
+      "semanticTokenColors.class.defaultLibrary:java"
+    ),
+
+    "type.defaultLibrary:java": assertColor(
+      syntax.builtin,
+      "semanticTokenColors.type.defaultLibrary:java"
+    ),
+      "variable.defaultLibrary:python": assertColor(
+      syntax.pythonBuiltin,
+      "semanticTokenColors.variable.defaultLibrary:python"
+    ),
+
+    "function.defaultLibrary:python": assertColor(
+      syntax.pythonBuiltin,
+      "semanticTokenColors.function.defaultLibrary:python"
+    ),
+
+    "method:python": assertColor(
+      syntax.method,
+      "semanticTokenColors.method:python"
+    ),
+    "type.declaration": assertColor(
+      syntax.type,
+      "semanticTokenColors.type.declaration"
+    ),
+
+    "class.declaration": assertColor(
+      syntax.type,
+      "semanticTokenColors.class.declaration"
+    ),
+
+    "interface.declaration": assertColor(
+      syntax.type,
+      "semanticTokenColors.interface.declaration"
+    ),
+
+    "struct.declaration": assertColor(
+      syntax.type,
+      "semanticTokenColors.struct.declaration"
+    ),
+
+    namespace: assertColor(
+      syntax.modulePath,
+      "semanticTokenColors.namespace"
+    ),
+
+    "variable.readonly": assertColor(
+      syntax.constant,
+      "semanticTokenColors.variable.readonly"
+    ),
+
+    label: assertColor(
+      syntax.label,
+      "semanticTokenColors.label"
+    ),
+    keyword: assertColor(
+      syntax.keyword,
+      "semanticTokenColors.keyword"
+    ),
+
+    regexp: assertColor(
+      syntax.regex,
+      "semanticTokenColors.regexp"
+    ),
+
+    "variable.readonly": assertColor(
+      syntax.readonlyVariable,
+      "semanticTokenColors.variable.readonly"
+    ),
+
+    "property.readonly": assertColor(
+      syntax.dataKey,
+      "semanticTokenColors.property.readonly"
+    ),
+
+    "method.static": assertColor(
+      syntax.function,
+      "semanticTokenColors.method.static"
+    ),
+
+    "function.static": assertColor(
+      syntax.function,
+      "semanticTokenColors.function.static"
+    ),
+
+    "class.defaultLibrary": assertColor(
+      syntax.builtin,
+      "semanticTokenColors.class.defaultLibrary"
+    ),
+
+    "type.defaultLibrary": assertColor(
+      syntax.builtin,
+      "semanticTokenColors.type.defaultLibrary"
+    ),
     variable: assertColor(
       syntax.variable,
       "semanticTokenColors.variable"
@@ -1073,11 +2806,6 @@ function buildCoherenceTheme(tokens) {
       "semanticTokenColors.typeParameter"
     ),
 
-    namespace: assertColor(
-      syntax.namespace,
-      "semanticTokenColors.namespace"
-    ),
-
     enum: assertColor(
       syntax.type,
       "semanticTokenColors.enum"
@@ -1117,11 +2845,72 @@ function ensureOutputDirectory() {
 
 function run() {
   const checkOnly = process.argv.includes("--check");
+  const validateOnly = process.argv.includes("--validate");
+  const reportContrast =
+    process.argv.includes("--report-contrast");
+
+  if (checkOnly && validateOnly) {
+    throw new Error(
+      "Use either --check or --validate, not both"
+    );
+  }
+
+  function printContrastReport(tokens) {
+  console.log("K2 contrast report:");
+
+  for (const contract of CONTRAST_CONTRACTS) {
+    const foreground = getValueByPath(
+      tokens,
+      contract.foreground
+    );
+
+    const background = getValueByPath(
+      tokens,
+      contract.background
+    );
+
+    const ratio = contrastRatio(
+      foreground,
+      background
+    );
+
+    const status =
+      ratio >= contract.minimum ? "PASS" : "FAIL";
+
+    console.log(
+      [
+        `  [${status}]`,
+        contract.name,
+        `${ratio.toFixed(2)}:1`,
+        `minimum ${contract.minimum}:1`
+      ].join(" ")
+    );
+  }
+}
 
   const rawTokens = readJson(TOKENS_PATH);
+
+  validateRawTokens(rawTokens);
+
   const resolvedTokens = resolveTokens(rawTokens);
+
+  validateResolvedTokens(resolvedTokens);
+
+  validateContrastContracts(resolvedTokens);
+
+  if (reportContrast) {
+    printContrastReport(resolvedTokens);
+  }
+
   const generatedTheme = buildCoherenceTheme(resolvedTokens);
   const generatedSource = serializeJson(generatedTheme);
+
+  if (validateOnly) {
+    console.log(
+      "K2 token architecture and contrast contracts are valid."
+    );
+    return;
+  }
 
   if (checkOnly) {
     if (!fs.existsSync(OUTPUT_PATH)) {
