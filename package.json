@@ -41,6 +41,11 @@
         "label": "K2 Dim",
         "uiTheme": "vs-dark",
         "path": "./themes/k2-dim.json"
+      },
+      {
+        "label": "K2 Endurance",
+        "uiTheme": "vs-dark",
+        "path": "./themes/k2-endurance.json"
       }
     ]
   }
