@@ -16,12 +16,19 @@ const THEME_OUTPUTS = {
     ROOT_DIR,
     "themes",
     "k2-vacuum.json"
+  ),
+
+  dim: path.join(
+    ROOT_DIR,
+    "themes",
+    "k2-dim.json"
   )
 };
 
 const REQUIRED_VARIANTS = [
   "coherence",
-  "vacuum"
+  "vacuum",
+  "dim"
 ];
 
 const REFERENCE_PATTERN = /^\{([a-zA-Z0-9_.-]+)\}$/;
