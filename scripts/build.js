@@ -127,13 +127,60 @@ function buildCoherenceTheme(tokens) {
   const syntax = tokens.components.syntax;
   const brackets = tokens.components.brackets;
   const states = tokens.components.states;
-  const surface = variant.surface;
 
-  if (!variant || !surface) {
+  if (!variant || !variant.surface) {
     throw new Error("Missing variants.coherence configuration");
   }
 
+  const surface = variant.surface;
+
   const colors = {
+    "foreground": assertColor(
+      tokens.semantic.contextSecondary,
+      "foreground"
+    ),
+    "disabledForeground": assertColor(
+      tokens.semantic.contextFaint,
+      "disabledForeground"
+    ),
+    "descriptionForeground": assertColor(
+      tokens.semantic.contextMuted,
+      "descriptionForeground"
+    ),
+    "errorForeground": assertColor(
+      states.error,
+      "errorForeground"
+    ),
+    "focusBorder": assertColor(
+      surface.focusBorder,
+      "focusBorder"
+    ),
+    "icon.foreground": assertColor(
+      tokens.semantic.contextSecondary,
+      "icon.foreground"
+    ),
+    "selection.background": assertColor(
+      surface.selection,
+      "selection.background"
+    ),
+    "widget.border": assertColor(
+      surface.border,
+      "widget.border"
+    ),
+    "widget.shadow": assertColor(
+      tokens.palette.black,
+      "widget.shadow"
+    ),
+
+    "window.activeBorder": assertColor(
+      surface.borderSubtle,
+      "window.activeBorder"
+    ),
+    "window.inactiveBorder": assertColor(
+      surface.borderSubtle,
+      "window.inactiveBorder"
+    ),
+
     "editor.background": assertColor(
       surface.editor,
       "editor.background"
@@ -143,7 +190,7 @@ function buildCoherenceTheme(tokens) {
       "editor.foreground"
     ),
     "editorCursor.foreground": assertColor(
-      surface.focus,
+      states.focus,
       "editorCursor.foreground"
     ),
     "editor.selectionBackground": assertColor(
@@ -160,7 +207,7 @@ function buildCoherenceTheme(tokens) {
     ),
 
     "editorLineNumber.foreground": assertColor(
-      tokens.semantic.contextMuted,
+      tokens.semantic.contextFaint,
       "editorLineNumber.foreground"
     ),
     "editorLineNumber.activeForeground": assertColor(
@@ -169,7 +216,7 @@ function buildCoherenceTheme(tokens) {
     ),
 
     "editorBracketMatch.border": assertColor(
-      surface.focus,
+      states.focus,
       "editorBracketMatch.border"
     ),
     "editorBracketMatch.background": assertColor(
@@ -206,6 +253,48 @@ function buildCoherenceTheme(tokens) {
       "editorBracketHighlight.unexpectedBracket.foreground"
     ),
 
+    "editorGroup.border": assertColor(
+      surface.borderSubtle,
+      "editorGroup.border"
+    ),
+    "editorGroupHeader.tabsBackground": assertColor(
+      surface.titleBar,
+      "editorGroupHeader.tabsBackground"
+    ),
+    "editorGroupHeader.noTabsBackground": assertColor(
+      surface.titleBar,
+      "editorGroupHeader.noTabsBackground"
+    ),
+
+    "tab.activeBackground": assertColor(
+      surface.editor,
+      "tab.activeBackground"
+    ),
+    "tab.activeForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "tab.activeForeground"
+    ),
+    "tab.activeBorderTop": assertColor(
+      states.focus,
+      "tab.activeBorderTop"
+    ),
+    "tab.inactiveBackground": assertColor(
+      surface.titleBar,
+      "tab.inactiveBackground"
+    ),
+    "tab.inactiveForeground": assertColor(
+      tokens.semantic.contextMuted,
+      "tab.inactiveForeground"
+    ),
+    "tab.unfocusedActiveForeground": assertColor(
+      tokens.semantic.contextSecondary,
+      "tab.unfocusedActiveForeground"
+    ),
+    "tab.border": assertColor(
+      surface.borderSubtle,
+      "tab.border"
+    ),
+
     "sideBar.background": assertColor(
       surface.sidebar,
       "sideBar.background"
@@ -217,6 +306,18 @@ function buildCoherenceTheme(tokens) {
     "sideBar.border": assertColor(
       surface.border,
       "sideBar.border"
+    ),
+    "sideBarSectionHeader.background": assertColor(
+      surface.sidebarSection,
+      "sideBarSectionHeader.background"
+    ),
+    "sideBarSectionHeader.foreground": assertColor(
+      tokens.semantic.contextSecondary,
+      "sideBarSectionHeader.foreground"
+    ),
+    "sideBarSectionHeader.border": assertColor(
+      surface.borderSubtle,
+      "sideBarSectionHeader.border"
     ),
 
     "activityBar.background": assertColor(
@@ -232,7 +333,7 @@ function buildCoherenceTheme(tokens) {
       "activityBar.inactiveForeground"
     ),
     "activityBarBadge.background": assertColor(
-      tokens.semantic.direction,
+      states.focus,
       "activityBarBadge.background"
     ),
     "activityBarBadge.foreground": assertColor(
@@ -261,6 +362,18 @@ function buildCoherenceTheme(tokens) {
       tokens.semantic.transformation,
       "statusBar.debuggingBackground"
     ),
+    "statusBarItem.errorBackground": assertColor(
+      states.error,
+      "statusBarItem.errorBackground"
+    ),
+    "statusBarItem.warningBackground": assertColor(
+      states.warning,
+      "statusBarItem.warningBackground"
+    ),
+    "statusBarItem.remoteBackground": assertColor(
+      states.information,
+      "statusBarItem.remoteBackground"
+    ),
 
     "titleBar.activeBackground": assertColor(
       surface.titleBar,
@@ -279,6 +392,125 @@ function buildCoherenceTheme(tokens) {
       "titleBar.inactiveForeground"
     ),
 
+    "list.activeSelectionBackground": assertColor(
+      surface.active,
+      "list.activeSelectionBackground"
+    ),
+    "list.activeSelectionForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "list.activeSelectionForeground"
+    ),
+    "list.inactiveSelectionBackground": assertColor(
+      surface.hover,
+      "list.inactiveSelectionBackground"
+    ),
+    "list.inactiveSelectionForeground": assertColor(
+      tokens.semantic.context,
+      "list.inactiveSelectionForeground"
+    ),
+    "list.hoverBackground": assertColor(
+      surface.hover,
+      "list.hoverBackground"
+    ),
+    "list.hoverForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "list.hoverForeground"
+    ),
+    "list.focusBackground": assertColor(
+      surface.active,
+      "list.focusBackground"
+    ),
+    "list.focusForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "list.focusForeground"
+    ),
+
+    "input.background": assertColor(
+      surface.input,
+      "input.background"
+    ),
+    "input.foreground": assertColor(
+      tokens.semantic.context,
+      "input.foreground"
+    ),
+    "input.border": assertColor(
+      surface.border,
+      "input.border"
+    ),
+    "input.placeholderForeground": assertColor(
+      tokens.semantic.contextMuted,
+      "input.placeholderForeground"
+    ),
+    "inputOption.activeBackground": assertColor(
+      surface.active,
+      "inputOption.activeBackground"
+    ),
+    "inputOption.activeBorder": assertColor(
+      states.focus,
+      "inputOption.activeBorder"
+    ),
+
+    "dropdown.background": assertColor(
+      surface.overlay,
+      "dropdown.background"
+    ),
+    "dropdown.foreground": assertColor(
+      tokens.semantic.context,
+      "dropdown.foreground"
+    ),
+    "dropdown.border": assertColor(
+      surface.border,
+      "dropdown.border"
+    ),
+
+    "quickInput.background": assertColor(
+      surface.overlay,
+      "quickInput.background"
+    ),
+    "quickInput.foreground": assertColor(
+      tokens.semantic.context,
+      "quickInput.foreground"
+    ),
+    "quickInputList.focusBackground": assertColor(
+      surface.active,
+      "quickInputList.focusBackground"
+    ),
+    "quickInputList.focusForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "quickInputList.focusForeground"
+    ),
+
+    "pickerGroup.border": assertColor(
+      surface.border,
+      "pickerGroup.border"
+    ),
+    "pickerGroup.foreground": assertColor(
+      tokens.semantic.structure,
+      "pickerGroup.foreground"
+    ),
+
+    "button.background": assertColor(
+      surface.button,
+      "button.background"
+    ),
+    "button.foreground": assertColor(
+      tokens.semantic.contextStrong,
+      "button.foreground"
+    ),
+    "button.hoverBackground": assertColor(
+      surface.buttonHover,
+      "button.hoverBackground"
+    ),
+
+    "badge.background": assertColor(
+      states.focus,
+      "badge.background"
+    ),
+    "badge.foreground": assertColor(
+      surface.activityBar,
+      "badge.foreground"
+    ),
+
     "editorWidget.background": assertColor(
       surface.overlay,
       "editorWidget.background"
@@ -286,6 +518,88 @@ function buildCoherenceTheme(tokens) {
     "editorWidget.border": assertColor(
       surface.border,
       "editorWidget.border"
+    ),
+
+    "editorSuggestWidget.background": assertColor(
+      surface.overlay,
+      "editorSuggestWidget.background"
+    ),
+    "editorSuggestWidget.border": assertColor(
+      surface.border,
+      "editorSuggestWidget.border"
+    ),
+    "editorSuggestWidget.foreground": assertColor(
+      tokens.semantic.context,
+      "editorSuggestWidget.foreground"
+    ),
+    "editorSuggestWidget.highlightForeground": assertColor(
+      tokens.semantic.directionStrong,
+      "editorSuggestWidget.highlightForeground"
+    ),
+    "editorSuggestWidget.selectedBackground": assertColor(
+      surface.active,
+      "editorSuggestWidget.selectedBackground"
+    ),
+
+    "editorHoverWidget.background": assertColor(
+      surface.overlay,
+      "editorHoverWidget.background"
+    ),
+    "editorHoverWidget.border": assertColor(
+      surface.border,
+      "editorHoverWidget.border"
+    ),
+
+    "editorGhostText.foreground": assertColor(
+      tokens.semantic.contextFaint,
+      "editorGhostText.foreground"
+    ),
+
+    "editorInlayHint.foreground": assertColor(
+      tokens.semantic.contextMuted,
+      "editorInlayHint.foreground"
+    ),
+    "editorInlayHint.background": assertColor(
+      surface.editorElevated,
+      "editorInlayHint.background"
+    ),
+    "editorInlayHint.typeForeground": assertColor(
+      tokens.semantic.structure,
+      "editorInlayHint.typeForeground"
+    ),
+    "editorInlayHint.parameterForeground": assertColor(
+      tokens.semantic.contextMuted,
+      "editorInlayHint.parameterForeground"
+    ),
+
+    "editorStickyScroll.background": assertColor(
+      surface.editor,
+      "editorStickyScroll.background"
+    ),
+    "editorStickyScrollHover.background": assertColor(
+      surface.hover,
+      "editorStickyScrollHover.background"
+    ),
+    "editorStickyScroll.border": assertColor(
+      surface.borderSubtle,
+      "editorStickyScroll.border"
+    ),
+
+    "breadcrumb.foreground": assertColor(
+      tokens.semantic.contextMuted,
+      "breadcrumb.foreground"
+    ),
+    "breadcrumb.focusForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "breadcrumb.focusForeground"
+    ),
+    "breadcrumb.activeSelectionForeground": assertColor(
+      tokens.semantic.directionStrong,
+      "breadcrumb.activeSelectionForeground"
+    ),
+    "breadcrumbPicker.background": assertColor(
+      surface.overlay,
+      "breadcrumbPicker.background"
     ),
 
     "editorGutter.modifiedBackground": assertColor(
@@ -299,10 +613,165 @@ function buildCoherenceTheme(tokens) {
     "editorGutter.deletedBackground": assertColor(
       states.deleted,
       "editorGutter.deletedBackground"
+    ),
+
+    "gitDecoration.modifiedResourceForeground": assertColor(
+      states.modified,
+      "gitDecoration.modifiedResourceForeground"
+    ),
+    "gitDecoration.addedResourceForeground": assertColor(
+      states.added,
+      "gitDecoration.addedResourceForeground"
+    ),
+    "gitDecoration.deletedResourceForeground": assertColor(
+      states.deleted,
+      "gitDecoration.deletedResourceForeground"
+    ),
+    "gitDecoration.conflictingResourceForeground": assertColor(
+      states.warning,
+      "gitDecoration.conflictingResourceForeground"
+    ),
+    "gitDecoration.ignoredResourceForeground": assertColor(
+      tokens.semantic.contextFaint,
+      "gitDecoration.ignoredResourceForeground"
     )
   };
 
   const tokenColors = [
+    createTokenColor(
+      "Markdown headings",
+      [
+        "markup.heading",
+        "entity.name.section",
+        "markup.heading.markdown"
+      ],
+      syntax.markupHeading,
+      "bold"
+    ),
+
+    createTokenColor(
+      "Markdown heading punctuation",
+      [
+        "punctuation.definition.heading",
+        "punctuation.definition.heading.markdown"
+      ],
+      syntax.keywordControl,
+      "bold"
+    ),
+
+    createTokenColor(
+      "Markdown bold",
+      [
+        "markup.bold",
+        "markup.bold.markdown"
+      ],
+      tokens.semantic.contextStrong,
+      "bold"
+    ),
+
+    createTokenColor(
+      "Markdown italic",
+      [
+        "markup.italic",
+        "markup.italic.markdown"
+      ],
+      syntax.markupEmphasis,
+      "italic"
+    ),
+
+    createTokenColor(
+      "Markdown inline code",
+      [
+        "markup.inline.raw",
+        "markup.inline.raw.string.markdown"
+      ],
+      syntax.markupCode
+    ),
+
+    createTokenColor(
+      "Markdown fenced code",
+      [
+        "markup.fenced_code.block",
+        "markup.raw.block"
+      ],
+      syntax.markupCode
+    ),
+
+    createTokenColor(
+      "Markdown quotes",
+      [
+        "markup.quote",
+        "markup.quote.markdown"
+      ],
+      syntax.markupQuote,
+      "italic"
+    ),
+
+    createTokenColor(
+      "Markdown list punctuation",
+      [
+        "punctuation.definition.list",
+        "punctuation.definition.list.begin.markdown",
+        "punctuation.definition.list.begin"
+      ],
+      syntax.keywordControl
+    ),
+
+    createTokenColor(
+      "Markdown links",
+      [
+        "markup.underline.link",
+        "string.other.link",
+        "meta.link.inline"
+      ],
+      syntax.tag
+    ),
+    createTokenColor(
+      "CSS element selectors",
+      [
+        "entity.name.tag.css"
+      ],
+      syntax.cssSelector
+    ),
+
+    createTokenColor(
+      "CSS class selectors",
+      [
+        "entity.other.attribute-name.class.css"
+      ],
+      syntax.cssSelector
+    ),
+
+    createTokenColor(
+      "CSS id and pseudo selectors",
+      [
+        "entity.other.attribute-name.id.css",
+        "entity.other.attribute-name.pseudo-class.css",
+        "entity.other.attribute-name.pseudo-element.css"
+      ],
+      syntax.cssSelectorSpecial
+    ),
+
+    createTokenColor(
+      "CSS properties",
+      [
+        "support.type.property-name.css",
+        "meta.property-name.css"
+      ],
+      syntax.cssProperty
+    ),
+
+    createTokenColor(
+      "CSS property values",
+      [
+        "support.constant.property-value.css",
+        "support.constant.font-name.css",
+        "support.constant.color.css",
+        "constant.other.color.rgb-value.css"
+      ],
+      syntax.cssValue
+    ),
+
     createTokenColor(
       "Comments",
       [
@@ -312,6 +781,27 @@ function buildCoherenceTheme(tokens) {
       syntax.comment,
       "italic"
     ),
+
+    createTokenColor(
+      "Documentation",
+      [
+        "comment.block.documentation",
+        "comment.line.documentation"
+      ],
+      syntax.documentation,
+      "italic"
+    ),
+
+    createTokenColor(
+      "Language keywords",
+      [
+        "keyword",
+        "storage.modifier",
+        "storage.type.function"
+      ],
+      syntax.keyword
+    ),
+
     createTokenColor(
       "Control flow",
       [
@@ -324,26 +814,64 @@ function buildCoherenceTheme(tokens) {
       ],
       syntax.keywordControl
     ),
+
+    createTokenColor(
+      "Operators",
+      [
+        "keyword.operator",
+        "keyword.operator.assignment",
+        "keyword.operator.arithmetic",
+        "keyword.operator.logical",
+        "keyword.operator.comparison",
+        "keyword.operator.accessor"
+      ],
+      syntax.operator
+    ),
+
     createTokenColor(
       "Types",
       [
         "entity.name.type",
         "entity.name.class",
         "entity.name.interface",
+        "entity.name.struct",
         "support.type",
         "storage.type"
       ],
       syntax.type
     ),
+
+    createTokenColor(
+      "Namespaces",
+      [
+        "entity.name.namespace",
+        "entity.name.module",
+        "support.module"
+      ],
+      syntax.namespace
+    ),
+
     createTokenColor(
       "Functions",
       [
         "entity.name.function",
         "support.function",
-        "variable.function"
+        "variable.function",
+        "meta.function-call entity.name.function"
       ],
       syntax.function
     ),
+
+    createTokenColor(
+      "Methods",
+      [
+        "entity.name.function.member",
+        "meta.method-call entity.name.function",
+        "support.function.method"
+      ],
+      syntax.method
+    ),
+
     createTokenColor(
       "Variables",
       [
@@ -352,6 +880,7 @@ function buildCoherenceTheme(tokens) {
       ],
       syntax.variable
     ),
+
     createTokenColor(
       "Parameters",
       [
@@ -359,6 +888,7 @@ function buildCoherenceTheme(tokens) {
       ],
       syntax.parameter
     ),
+
     createTokenColor(
       "Properties",
       [
@@ -368,6 +898,7 @@ function buildCoherenceTheme(tokens) {
       ],
       syntax.property
     ),
+
     createTokenColor(
       "Strings",
       [
@@ -375,6 +906,7 @@ function buildCoherenceTheme(tokens) {
       ],
       syntax.string
     ),
+
     createTokenColor(
       "Numbers",
       [
@@ -382,6 +914,7 @@ function buildCoherenceTheme(tokens) {
       ],
       syntax.number
     ),
+
     createTokenColor(
       "Boolean values",
       [
@@ -389,6 +922,7 @@ function buildCoherenceTheme(tokens) {
       ],
       syntax.boolean
     ),
+
     createTokenColor(
       "Null values",
       [
@@ -396,6 +930,7 @@ function buildCoherenceTheme(tokens) {
       ],
       syntax.null
     ),
+
     createTokenColor(
       "Decorators and annotations",
       [
@@ -404,6 +939,59 @@ function buildCoherenceTheme(tokens) {
       ],
       syntax.decorator
     ),
+
+    createTokenColor(
+      "Structural punctuation",
+      [
+        "punctuation.separator",
+        "punctuation.terminator",
+        "punctuation.accessor",
+        "punctuation.definition.parameters",
+        "punctuation.definition.typeparameters"
+      ],
+      syntax.punctuation
+    ),
+
+    createTokenColor(
+      "HTML and XML tags",
+      [
+        "entity.name.tag",
+        "entity.name.tag.html",
+        "entity.name.tag.xml"
+      ],
+      syntax.tag
+    ),
+
+    createTokenColor(
+      "HTML and XML attributes",
+      [
+        "entity.other.attribute-name",
+        "entity.other.attribute-name.html",
+        "entity.other.attribute-name.xml"
+      ],
+      syntax.attribute
+    ),
+
+    createTokenColor(
+      "Tag punctuation",
+      [
+        "punctuation.definition.tag",
+        "punctuation.definition.tag.begin",
+        "punctuation.definition.tag.end"
+      ],
+      syntax.punctuation
+    ),
+
+    createTokenColor(
+      "Template delimiters",
+      [
+        "punctuation.definition.template-expression",
+        "punctuation.section.embedded.begin",
+        "punctuation.section.embedded.end"
+      ],
+      syntax.keywordControl
+    ),
+
     createTokenColor(
       "Invalid",
       [
@@ -419,46 +1007,87 @@ function buildCoherenceTheme(tokens) {
       syntax.variable,
       "semanticTokenColors.variable"
     ),
+
     "variable.readonly": assertColor(
-      tokens.semantic.direction,
+      syntax.readonlyVariable,
       "semanticTokenColors.variable.readonly"
     ),
-    property: assertColor(
-      syntax.property,
-      "semanticTokenColors.property"
+
+    "variable.defaultLibrary": assertColor(
+      syntax.namespace,
+      "semanticTokenColors.variable.defaultLibrary"
     ),
+
     parameter: assertColor(
       syntax.parameter,
       "semanticTokenColors.parameter"
     ),
+
+    property: assertColor(
+      syntax.property,
+      "semanticTokenColors.property"
+    ),
+
     function: assertColor(
       syntax.function,
       "semanticTokenColors.function"
     ),
-    method: assertColor(
+
+    "function.defaultLibrary": assertColor(
       syntax.function,
+      "semanticTokenColors.function.defaultLibrary"
+    ),
+
+    method: assertColor(
+      syntax.method,
       "semanticTokenColors.method"
     ),
+
+    macro: assertColor(
+      syntax.macro,
+      "semanticTokenColors.macro"
+    ),
+
     class: assertColor(
       syntax.type,
       "semanticTokenColors.class"
     ),
+
     interface: assertColor(
       syntax.type,
       "semanticTokenColors.interface"
     ),
+
+    struct: assertColor(
+      syntax.type,
+      "semanticTokenColors.struct"
+    ),
+
     type: assertColor(
       syntax.type,
       "semanticTokenColors.type"
     ),
+
     typeParameter: assertColor(
       syntax.type,
       "semanticTokenColors.typeParameter"
     ),
+
+    namespace: assertColor(
+      syntax.namespace,
+      "semanticTokenColors.namespace"
+    ),
+
+    enum: assertColor(
+      syntax.type,
+      "semanticTokenColors.enum"
+    ),
+
     enumMember: assertColor(
-      syntax.boolean,
+      syntax.enumMember,
       "semanticTokenColors.enumMember"
     ),
+
     decorator: assertColor(
       syntax.decorator,
       "semanticTokenColors.decorator"
