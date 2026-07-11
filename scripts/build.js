@@ -25,6 +25,20 @@ const REQUIRED_TOKEN_PATHS = [
   "semantic.attention",
   "semantic.rupture",
 
+  "components.debug.toolbarBackground",
+  "components.debug.breakpoint",
+  "components.debug.breakpointDisabled",
+  "components.debug.currentLine",
+
+  "components.testing.passed",
+  "components.testing.failed",
+  "components.testing.queued",
+  "components.testing.skipped",
+  "components.testing.runAction",
+  "components.testing.passedBackground",
+  "components.testing.failedBackground",
+  "components.testing.queuedBackground",
+
   "components.syntax.foreground",
   "components.syntax.comment",
   "components.syntax.keyword",
@@ -712,6 +726,8 @@ function buildCoherenceTheme(tokens) {
   const states = tokens.components.states;
   const terminal = tokens.components.terminal;
   const diff = tokens.components.diff;
+  const debug = tokens.components.debug;
+  const testing = tokens.components.testing;
 
   if (!variant || !variant.surface) {
     throw new Error("Missing variants.coherence configuration");
@@ -720,6 +736,375 @@ function buildCoherenceTheme(tokens) {
   const surface = variant.surface;
 
   const colors = {
+    "menu.background": assertColor(
+      surface.overlay,
+      "menu.background"
+    ),
+
+    "menu.foreground": assertColor(
+      tokens.semantic.context,
+      "menu.foreground"
+    ),
+
+    "menu.selectionBackground": assertColor(
+      surface.active,
+      "menu.selectionBackground"
+    ),
+
+    "menu.selectionForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "menu.selectionForeground"
+    ),
+
+    "menu.separatorBackground": assertColor(
+      surface.border,
+      "menu.separatorBackground"
+    ),
+
+    "commandCenter.background": assertColor(
+      surface.input,
+      "commandCenter.background"
+    ),
+
+    "commandCenter.foreground": assertColor(
+      tokens.semantic.contextSecondary,
+      "commandCenter.foreground"
+    ),
+
+    "commandCenter.activeBackground": assertColor(
+      surface.active,
+      "commandCenter.activeBackground"
+    ),
+
+    "commandCenter.activeForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "commandCenter.activeForeground"
+    ),
+
+    "commandCenter.border": assertColor(
+      surface.border,
+      "commandCenter.border"
+    ),
+
+    "notificationCenter.border": assertColor(
+      surface.border,
+      "notificationCenter.border"
+    ),
+
+    "notificationCenterHeader.background": assertColor(
+      surface.overlay,
+      "notificationCenterHeader.background"
+    ),
+
+    "notificationCenterHeader.foreground": assertColor(
+      tokens.semantic.contextStrong,
+      "notificationCenterHeader.foreground"
+    ),
+
+    "notifications.background": assertColor(
+      surface.overlay,
+      "notifications.background"
+    ),
+
+    "notifications.foreground": assertColor(
+      tokens.semantic.context,
+      "notifications.foreground"
+    ),
+
+    "notifications.border": assertColor(
+      surface.border,
+      "notifications.border"
+    ),
+
+    "notificationLink.foreground": assertColor(
+      tokens.semantic.directionStrong,
+      "notificationLink.foreground"
+    ),
+    "scrollbar.shadow": assertColor(
+      tokens.palette.black,
+      "scrollbar.shadow"
+    ),
+
+    "scrollbarSlider.background": assertColor(
+      tokens.palette.scrollbarThumb,
+      "scrollbarSlider.background"
+    ),
+
+    "scrollbarSlider.hoverBackground": assertColor(
+      tokens.palette.scrollbarThumbHover,
+      "scrollbarSlider.hoverBackground"
+    ),
+
+    "scrollbarSlider.activeBackground": assertColor(
+      tokens.palette.scrollbarThumbActive,
+      "scrollbarSlider.activeBackground"
+    ),
+
+    "minimap.selectionHighlight": assertColor(
+      tokens.palette.minimapSelection,
+      "minimap.selectionHighlight"
+    ),
+
+    "minimap.errorHighlight": assertColor(
+      tokens.palette.minimapError,
+      "minimap.errorHighlight"
+    ),
+
+    "minimap.warningHighlight": assertColor(
+      tokens.palette.minimapWarning,
+      "minimap.warningHighlight"
+    ),
+
+    "minimap.infoHighlight": assertColor(
+      tokens.palette.minimapInfo,
+      "minimap.infoHighlight"
+    ),
+
+    "minimap.findMatchHighlight": assertColor(
+      surface.selection,
+      "minimap.findMatchHighlight"
+    ),
+
+    "minimapGutter.addedBackground": assertColor(
+      states.added,
+      "minimapGutter.addedBackground"
+    ),
+
+    "minimapGutter.modifiedBackground": assertColor(
+      states.modified,
+      "minimapGutter.modifiedBackground"
+    ),
+
+    "minimapGutter.deletedBackground": assertColor(
+      states.deleted,
+      "minimapGutter.deletedBackground"
+    ),
+    "peekView.border": assertColor(
+      states.focus,
+      "peekView.border"
+    ),
+
+    "peekViewEditor.background": assertColor(
+      surface.editor,
+      "peekViewEditor.background"
+    ),
+
+    "peekViewEditor.matchHighlightBackground": assertColor(
+      surface.selection,
+      "peekViewEditor.matchHighlightBackground"
+    ),
+
+    "peekViewResult.background": assertColor(
+      surface.sidebar,
+      "peekViewResult.background"
+    ),
+
+    "peekViewResult.fileForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "peekViewResult.fileForeground"
+    ),
+
+    "peekViewResult.lineForeground": assertColor(
+      tokens.semantic.contextMuted,
+      "peekViewResult.lineForeground"
+    ),
+
+    "peekViewResult.matchHighlightBackground": assertColor(
+      surface.selectionInactive,
+      "peekViewResult.matchHighlightBackground"
+    ),
+
+    "peekViewResult.selectionBackground": assertColor(
+      surface.active,
+      "peekViewResult.selectionBackground"
+    ),
+
+    "peekViewResult.selectionForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "peekViewResult.selectionForeground"
+    ),
+
+    "peekViewTitle.background": assertColor(
+      surface.overlay,
+      "peekViewTitle.background"
+    ),
+
+    "peekViewTitleDescription.foreground": assertColor(
+      tokens.semantic.contextMuted,
+      "peekViewTitleDescription.foreground"
+    ),
+
+    "peekViewTitleLabel.foreground": assertColor(
+      tokens.semantic.contextStrong,
+      "peekViewTitleLabel.foreground"
+    ),
+    "notebook.editorBackground": assertColor(
+      surface.editor,
+      "notebook.editorBackground"
+    ),
+
+    "notebook.cellEditorBackground": assertColor(
+      surface.editorElevated,
+      "notebook.cellEditorBackground"
+    ),
+
+    "notebook.cellBorderColor": assertColor(
+      surface.borderSubtle,
+      "notebook.cellBorderColor"
+    ),
+
+    "notebook.focusedCellBorder": assertColor(
+      states.focus,
+      "notebook.focusedCellBorder"
+    ),
+
+    "notebook.selectedCellBorder": assertColor(
+      surface.border,
+      "notebook.selectedCellBorder"
+    ),
+
+    "notebook.inactiveFocusedCellBorder": assertColor(
+      surface.borderSubtle,
+      "notebook.inactiveFocusedCellBorder"
+    ),
+
+    "notebook.cellStatusBarItemHoverBackground": assertColor(
+      surface.hover,
+      "notebook.cellStatusBarItemHoverBackground"
+    ),
+
+    "notebook.outputContainerBackgroundColor": assertColor(
+      surface.panel,
+      "notebook.outputContainerBackgroundColor"
+    ),
+
+    "notebookScrollbarSlider.background": assertColor(
+      tokens.palette.scrollbarThumb,
+      "notebookScrollbarSlider.background"
+    ),
+
+    "notebookScrollbarSlider.hoverBackground": assertColor(
+      tokens.palette.scrollbarThumbHover,
+      "notebookScrollbarSlider.hoverBackground"
+    ),
+
+    "notebookScrollbarSlider.activeBackground": assertColor(
+      tokens.palette.scrollbarThumbActive,
+      "notebookScrollbarSlider.activeBackground"
+    ),
+    "testing.iconPassed": assertColor(
+      testing.passed,
+      "testing.iconPassed"
+    ),
+
+    "testing.iconFailed": assertColor(
+      testing.failed,
+      "testing.iconFailed"
+    ),
+
+    "testing.iconErrored": assertColor(
+      testing.failed,
+      "testing.iconErrored"
+    ),
+
+    "testing.iconQueued": assertColor(
+      testing.queued,
+      "testing.iconQueued"
+    ),
+
+    "testing.iconSkipped": assertColor(
+      testing.skipped,
+      "testing.iconSkipped"
+    ),
+
+    "testing.iconUnset": assertColor(
+      tokens.semantic.contextMuted,
+      "testing.iconUnset"
+    ),
+
+    "testing.runAction": assertColor(
+      testing.runAction,
+      "testing.runAction"
+    ),
+
+    "testing.coverCountBadgeBackground": assertColor(
+      surface.active,
+      "testing.coverCountBadgeBackground"
+    ),
+
+    "testing.coverCountBadgeForeground": assertColor(
+      tokens.semantic.contextStrong,
+      "testing.coverCountBadgeForeground"
+    ),
+
+    "testing.coveredBackground": assertColor(
+      testing.passedBackground,
+      "testing.coveredBackground"
+    ),
+
+    "testing.uncoveredBackground": assertColor(
+      testing.failedBackground,
+      "testing.uncoveredBackground"
+    ),
+    "debugToolBar.background": assertColor(
+      debug.toolbarBackground,
+      "debugToolBar.background"
+    ),
+
+    "debugToolBar.border": assertColor(
+      surface.border,
+      "debugToolBar.border"
+    ),
+
+    "editor.stackFrameHighlightBackground": assertColor(
+      debug.currentLine,
+      "editor.stackFrameHighlightBackground"
+    ),
+
+    "editor.focusedStackFrameHighlightBackground": assertColor(
+      surface.selectionInactive,
+      "editor.focusedStackFrameHighlightBackground"
+    ),
+
+    "debugIcon.breakpointForeground": assertColor(
+      debug.breakpoint,
+      "debugIcon.breakpointForeground"
+    ),
+
+    "debugIcon.breakpointDisabledForeground": assertColor(
+      debug.breakpointDisabled,
+      "debugIcon.breakpointDisabledForeground"
+    ),
+
+    "debugIcon.breakpointCurrentStackframeForeground": assertColor(
+      states.warning,
+      "debugIcon.breakpointCurrentStackframeForeground"
+    ),
+
+    "debugIcon.startForeground": assertColor(
+      states.added,
+      "debugIcon.startForeground"
+    ),
+
+    "debugIcon.pauseForeground": assertColor(
+      states.warning,
+      "debugIcon.pauseForeground"
+    ),
+
+    "debugIcon.stopForeground": assertColor(
+      states.error,
+      "debugIcon.stopForeground"
+    ),
+
+    "debugIcon.disconnectForeground": assertColor(
+      states.error,
+      "debugIcon.disconnectForeground"
+    ),
+
+    "debugIcon.restartForeground": assertColor(
+      states.information,
+      "debugIcon.restartForeground"
+    ),
     "foreground": assertColor(
       tokens.semantic.contextSecondary,
       "foreground"
