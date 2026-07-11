@@ -31,6 +31,16 @@
         "label": "K2 Coherence",
         "uiTheme": "vs-dark",
         "path": "./themes/k2-coherence.json"
+      },
+      {
+        "label": "K2 Vacuum",
+        "uiTheme": "vs-dark",
+        "path": "./themes/k2-vacuum.json"
+      },
+      {
+        "label": "K2 Dim",
+        "uiTheme": "vs-dark",
+        "path": "./themes/k2-dim.json"
       }
     ]
   }

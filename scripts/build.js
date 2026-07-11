@@ -5,7 +5,31 @@ const path = require("node:path");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const TOKENS_PATH = path.join(ROOT_DIR, "design", "tokens.json");
-const OUTPUT_PATH = path.join(ROOT_DIR, "themes", "k2-coherence.json");
+const THEME_OUTPUTS = {
+  coherence: path.join(
+    ROOT_DIR,
+    "themes",
+    "k2-coherence.json"
+  ),
+
+  vacuum: path.join(
+    ROOT_DIR,
+    "themes",
+    "k2-vacuum.json"
+  ),
+
+  dim: path.join(
+    ROOT_DIR,
+    "themes",
+    "k2-dim.json"
+  )
+};
+
+const REQUIRED_VARIANTS = [
+  "coherence",
+  "vacuum",
+  "dim"
+];
 
 const REFERENCE_PATTERN = /^\{([a-zA-Z0-9_.-]+)\}$/;
 const HEX_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/;
@@ -25,7 +49,6 @@ const REQUIRED_TOKEN_PATHS = [
   "semantic.attention",
   "semantic.rupture",
 
-  "components.debug.toolbarBackground",
   "components.debug.breakpoint",
   "components.debug.breakpointDisabled",
   "components.debug.currentLine",
@@ -68,7 +91,6 @@ const REQUIRED_TOKEN_PATHS = [
   "components.states.warning",
   "components.states.error",
 
-  "components.terminal.background",
   "components.terminal.foreground",
   "components.terminal.cursor",
   "components.terminal.black",
@@ -94,19 +116,9 @@ const REQUIRED_TOKEN_PATHS = [
   "components.diff.removedText",
   "components.diff.modifiedLine",
   "components.diff.conflict",
-
-  "variants.coherence.name",
-  "variants.coherence.type",
-  "variants.coherence.uiTheme",
-  "variants.coherence.surface.editor",
-  "variants.coherence.surface.sidebar",
-  "variants.coherence.surface.panel",
-  "variants.coherence.surface.overlay",
-  "variants.coherence.surface.border",
-  "variants.coherence.surface.focusBorder"
 ];
 
-const REQUIRED_COHERENCE_SURFACES = [
+const REQUIRED_VARIANT_SURFACES = [
   "editor",
   "editorElevated",
   "sidebar",
@@ -130,106 +142,127 @@ const REQUIRED_COHERENCE_SURFACES = [
   "active"
 ];
 
-const CONTRAST_CONTRACTS = [
+const CONTRAST_CONTRACT_TEMPLATES = [
   {
     name: "Editor primary text",
     foreground: "components.syntax.foreground",
-    background: "variants.coherence.surface.editor",
+    surface: "editor",
     minimum: 4.5,
     severity: "error"
   },
   {
     name: "Sidebar primary text",
     foreground: "semantic.contextSecondary",
-    background: "variants.coherence.surface.sidebar",
+    surface: "sidebar",
     minimum: 4.5,
     severity: "error"
   },
   {
     name: "Input text",
     foreground: "semantic.context",
-    background: "variants.coherence.surface.input",
+    surface: "input",
     minimum: 4.5,
     severity: "error"
   },
   {
     name: "Quick input text",
     foreground: "semantic.context",
-    background: "variants.coherence.surface.overlay",
+    surface: "overlay",
     minimum: 4.5,
     severity: "error"
   },
   {
     name: "Button text",
-    foreground: "variants.coherence.surface.activityBar",
-    background: "variants.coherence.surface.button",
+    foregroundSurface: "activityBar",
+    surface: "button",
     minimum: 3,
     severity: "error"
   },
   {
     name: "Comments",
     foreground: "components.syntax.comment",
-    background: "variants.coherence.surface.editor",
+    surface: "editor",
     minimum: 3,
     severity: "warning"
   },
   {
     name: "Line numbers",
     foreground: "semantic.contextFaint",
-    background: "variants.coherence.surface.editor",
+    surface: "editor",
     minimum: 3,
     severity: "warning"
   },
   {
     name: "Ghost text",
     foreground: "semantic.contextFaint",
-    background: "variants.coherence.surface.editor",
+    surface: "editor",
     minimum: 2.5,
     severity: "warning"
   },
   {
     name: "Inlay hints",
     foreground: "semantic.contextMuted",
-    background: "variants.coherence.surface.editorElevated",
+    surface: "editorElevated",
     minimum: 3,
     severity: "warning"
   },
   {
     name: "Terminal primary text",
     foreground: "components.terminal.foreground",
-    background: "components.terminal.background",
+    surface: "panel",
     minimum: 4.5,
     severity: "error"
   },
   {
     name: "Terminal bright black",
     foreground: "components.terminal.brightBlack",
-    background: "components.terminal.background",
+    surface: "panel",
     minimum: 3,
     severity: "warning"
   },
   {
     name: "Terminal blue",
     foreground: "components.terminal.blue",
-    background: "components.terminal.background",
+    surface: "panel",
     minimum: 3,
     severity: "warning"
   },
   {
     name: "Terminal green",
     foreground: "components.terminal.green",
-    background: "components.terminal.background",
+    surface: "panel",
     minimum: 3,
     severity: "warning"
   },
   {
     name: "Terminal red",
     foreground: "components.terminal.red",
-    background: "components.terminal.background",
+    surface: "panel",
     minimum: 3,
     severity: "warning"
-  },
+  }
 ];
+
+function getContrastContracts(tokens, variantName) {
+  const surface =
+    tokens.variants[variantName].surface;
+
+  return CONTRAST_CONTRACT_TEMPLATES.map(
+    (template) => {
+      const foreground = template.foreground
+        ? getValueByPath(tokens, template.foreground)
+        : surface[template.foregroundSurface];
+
+      return {
+        name: `${tokens.variants[variantName].name} — ${template.name}`,
+        foreground,
+        background: surface[template.surface],
+        minimum: template.minimum,
+        severity: template.severity
+      };
+    }
+  );
+}
 
 function fail(message) {
   console.error(`K2 build failed: ${message}`);
@@ -250,6 +283,34 @@ function readJson(filePath) {
   } catch (error) {
     throw new Error(`Invalid JSON in ${filePath}: ${error.message}`);
   }
+}
+
+function deepMerge(baseValue, overrideValue) {
+  if (overrideValue === undefined) {
+    return structuredClone(baseValue);
+  }
+
+  if (
+    !isPlainObject(baseValue) ||
+    !isPlainObject(overrideValue)
+  ) {
+    return structuredClone(overrideValue);
+  }
+
+  const result = structuredClone(baseValue);
+
+  for (const [key, value] of Object.entries(
+    overrideValue
+  )) {
+    result[key] = Object.prototype.hasOwnProperty.call(
+      baseValue,
+      key
+    )
+      ? deepMerge(baseValue[key], value)
+      : structuredClone(value);
+  }
+
+  return result;
 }
 
 function getValueByPath(root, referencePath) {
@@ -391,34 +452,50 @@ function assertNoUnresolvedReferences(value, currentPath = []) {
   }
 }
 
-function validateCoherenceVariant(tokens) {
-  const variant = tokens.variants.coherence;
+function validateVariant(tokens, variantName) {
+  const variantPath = `variants.${variantName}`;
+  const variant = getValueByPath(tokens, variantPath);
 
-  assertPlainObject(variant, "variants.coherence");
   assertPlainObject(
-    variant.surface,
-    "variants.coherence.surface"
+    variant,
+    variantPath
   );
 
-  if (variant.name !== "K2 Coherence") {
+  assertPlainObject(
+    variant.surface,
+    `${variantPath}.surface`
+  );
+
+  if (
+    typeof variant.name !== "string" ||
+    variant.name.trim() === ""
+  ) {
     throw new Error(
-      `Expected variants.coherence.name to be "K2 Coherence"`
+      `Expected "${variantPath}.name" to be a non-empty string`
     );
   }
 
-  if (variant.type !== "dark") {
+  if (!["dark", "light"].includes(variant.type)) {
     throw new Error(
-      `Expected variants.coherence.type to be "dark"`
+      `Expected "${variantPath}.type" to be "dark" or "light"`
     );
   }
 
-  if (variant.uiTheme !== "vs-dark") {
+  const expectedUiTheme =
+    variant.type === "light"
+      ? "vs"
+      : "vs-dark";
+
+  if (variant.uiTheme !== expectedUiTheme) {
     throw new Error(
-      `Expected variants.coherence.uiTheme to be "vs-dark"`
+      `Expected "${variantPath}.uiTheme" to be ` +
+      `"${expectedUiTheme}" for a ${variant.type} theme`
     );
   }
 
-  for (const surfaceName of REQUIRED_COHERENCE_SURFACES) {
+  for (
+    const surfaceName of REQUIRED_VARIANT_SURFACES
+  ) {
     if (
       !Object.prototype.hasOwnProperty.call(
         variant.surface,
@@ -426,10 +503,32 @@ function validateCoherenceVariant(tokens) {
       )
     ) {
       throw new Error(
-        `Missing required Coherence surface: ` +
-        `variants.coherence.surface.${surfaceName}`
+        `Missing required surface: ` +
+        `${variantPath}.surface.${surfaceName}`
       );
     }
+  }
+}
+
+function validateVariants(tokens) {
+  assertPlainObject(
+    tokens.variants,
+    "variants"
+  );
+
+  for (const variantName of REQUIRED_VARIANTS) {
+    if (
+      !Object.prototype.hasOwnProperty.call(
+        tokens.variants,
+        variantName
+      )
+    ) {
+      throw new Error(
+        `Missing required K2 variant: ${variantName}`
+      );
+    }
+
+    validateVariant(tokens, variantName);
   }
 }
 
@@ -456,44 +555,42 @@ function validateRawTokens(tokens) {
   validatePalette(tokens.palette);
   assertRequiredPaths(tokens);
   assertNoRawColorsOutsidePalette(tokens);
-  validateCoherenceVariant(tokens);
+  validateVariants(tokens);
 }
 
 function validateResolvedTokens(tokens) {
   assertNoUnresolvedReferences(tokens);
 
   validatePalette(tokens.palette);
-  validateCoherenceVariant(tokens);
+  validateVariants(tokens);
 }
 
-function validateContrastContracts(tokens) {
+function validateContrastContracts(
+  tokens,
+  variantName
+) {
   const warnings = [];
   const failures = [];
 
-  for (const contract of CONTRAST_CONTRACTS) {
-    const foreground = getValueByPath(
-      tokens,
-      contract.foreground
-    );
+  const contracts = getContrastContracts(
+    tokens,
+    variantName
+  );
 
-    const background = getValueByPath(
-      tokens,
-      contract.background
-    );
-
+  for (const contract of contracts) {
     assertColor(
-      foreground,
+      contract.foreground,
       `contrast.${contract.name}.foreground`
     );
 
     assertColor(
-      background,
+      contract.background,
       `contrast.${contract.name}.background`
     );
 
     const ratio = contrastRatio(
-      foreground,
-      background
+      contract.foreground,
+      contract.background
     );
 
     const formattedRatio = ratio.toFixed(2);
@@ -505,7 +602,8 @@ function validateContrastContracts(tokens) {
     const message =
       `${contract.name}: ${formattedRatio}:1 ` +
       `(minimum ${contract.minimum}:1) — ` +
-      `${foreground} on ${background}`;
+      `${contract.foreground} on ` +
+      `${contract.background}`;
 
     if (contract.severity === "error") {
       failures.push(message);
@@ -526,7 +624,9 @@ function validateContrastContracts(tokens) {
     throw new Error(
       [
         "Critical contrast contract failed:",
-        ...failures.map((failure) => `  - ${failure}`)
+        ...failures.map(
+          (failure) => `  - ${failure}`
+        )
       ].join("\n")
     );
   }
@@ -576,6 +676,46 @@ function resolveValue(value, root, resolutionStack = []) {
 
 function resolveTokens(tokens) {
   return resolveValue(tokens, tokens);
+}
+
+function createVariantTokenTree(
+  rawTokens,
+  variantName
+) {
+  const variant =
+    rawTokens.variants?.[variantName];
+
+  if (!variant) {
+    throw new Error(
+      `Cannot resolve unknown variant: ${variantName}`
+    );
+  }
+
+  const variantTokens = structuredClone(rawTokens);
+
+  variantTokens.semantic = deepMerge(
+    rawTokens.semantic,
+    variant.semanticOverrides ?? {}
+  );
+
+  variantTokens.components = deepMerge(
+    rawTokens.components,
+    variant.componentOverrides ?? {}
+  );
+
+  return resolveTokens(variantTokens);
+}
+
+function resolveVariantTokenTrees(rawTokens) {
+  return Object.fromEntries(
+    REQUIRED_VARIANTS.map((variantName) => [
+      variantName,
+      createVariantTokenTree(
+        rawTokens,
+        variantName
+      )
+    ])
+  );
 }
 
 function assertColor(value, label) {
@@ -719,8 +859,8 @@ function createTokenColor(name, scope, foreground, fontStyle) {
   };
 }
 
-function buildCoherenceTheme(tokens) {
-  const variant = tokens.variants.coherence;
+function buildTheme(tokens, variantName) {
+  const variant = tokens.variants[variantName];
   const syntax = tokens.components.syntax;
   const brackets = tokens.components.brackets;
   const states = tokens.components.states;
@@ -730,7 +870,9 @@ function buildCoherenceTheme(tokens) {
   const testing = tokens.components.testing;
 
   if (!variant || !variant.surface) {
-    throw new Error("Missing variants.coherence configuration");
+  throw new Error(
+    `Missing variants.${variantName} configuration`
+  );
   }
 
   const surface = variant.surface;
@@ -1047,10 +1189,9 @@ function buildCoherenceTheme(tokens) {
       "testing.uncoveredBackground"
     ),
     "debugToolBar.background": assertColor(
-      debug.toolbarBackground,
+      surface.overlay,
       "debugToolBar.background"
     ),
-
     "debugToolBar.border": assertColor(
       surface.border,
       "debugToolBar.border"
@@ -1584,9 +1725,8 @@ function buildCoherenceTheme(tokens) {
       states.deleted,
       "editorGutter.deletedBackground"
     ),
-
     "terminal.background": assertColor(
-      terminal.background,
+      surface.panel,
       "terminal.background"
     ),
     "terminal.foreground": assertColor(
@@ -1826,6 +1966,14 @@ function buildCoherenceTheme(tokens) {
 
   const tokenColors = [
     createTokenColor(
+      "TypeScript primitive types",
+      [
+        "support.type.primitive.ts",
+        "support.type.primitive.tsx"
+      ],
+      syntax.primitiveType
+    ),
+    createTokenColor(
       "Python self and cls",
       [
         "variable.language.special.self.python",
@@ -1833,6 +1981,57 @@ function buildCoherenceTheme(tokens) {
         "variable.parameter.function.language.special.cls.python"
       ],
       syntax.selfReference
+    ),
+
+    createTokenColor(
+      "TypeScript interface declaration keyword",
+      [
+        "storage.type.interface.ts",
+        "storage.type.interface.tsx"
+      ],
+      syntax.keyword
+    ),
+
+    createTokenColor(
+      "TypeScript interface declaration name",
+      [
+        "entity.name.type.interface.ts",
+        "entity.name.type.interface.tsx"
+      ],
+      syntax.function
+    ),
+
+    createTokenColor(
+      "TypeScript utility types",
+      [
+        "support.type.builtin.ts",
+        "support.type.builtin.tsx",
+        "support.type.object.module.ts",
+        "support.type.object.module.tsx"
+      ],
+      syntax.modulePath
+    ),
+
+    createTokenColor(
+      "TypeScript primitive types",
+      [
+        "support.type.primitive.ts",
+        "support.type.primitive.tsx",
+        "storage.type.ts",
+        "storage.type.tsx"
+      ],
+      syntax.type
+    ),
+
+    createTokenColor(
+      "TypeScript properties",
+      [
+        "variable.other.property.ts",
+        "variable.other.property.tsx",
+        "meta.object-literal.key.ts",
+        "meta.object-literal.key.tsx"
+      ],
+      syntax.property
     ),
 
     createTokenColor(
@@ -2674,7 +2873,7 @@ function buildCoherenceTheme(tokens) {
     ),
 
     "interface.declaration": assertColor(
-      syntax.type,
+      syntax.interfaceDeclaration,
       "semanticTokenColors.interface.declaration"
     ),
 
@@ -2733,7 +2932,7 @@ function buildCoherenceTheme(tokens) {
     ),
 
     "type.defaultLibrary": assertColor(
-      syntax.builtin,
+      syntax.builtinType,
       "semanticTokenColors.type.defaultLibrary"
     ),
     variable: assertColor(
@@ -2833,21 +3032,77 @@ function buildCoherenceTheme(tokens) {
   };
 }
 
+function buildAllThemes(
+  resolvedVariantTokens
+) {
+  return Object.fromEntries(
+    REQUIRED_VARIANTS.map((variantName) => [
+      variantName,
+      buildTheme(
+        resolvedVariantTokens[variantName],
+        variantName
+      )
+    ])
+  );
+}
+
 function serializeJson(value) {
   return `${JSON.stringify(value, null, 2)}\n`;
 }
 
-function ensureOutputDirectory() {
-  fs.mkdirSync(path.dirname(OUTPUT_PATH), {
-    recursive: true
-  });
+function printContrastReport(
+  resolvedVariantTokens
+) {
+  console.log("K2 contrast report:");
+
+  for (const variantName of REQUIRED_VARIANTS) {
+    const tokens =
+      resolvedVariantTokens[variantName];
+
+    const variant =
+      tokens.variants[variantName];
+
+    const contracts = getContrastContracts(
+      tokens,
+      variantName
+    );
+
+    console.log(`\n${variant.name}:`);
+
+    for (const contract of contracts) {
+      const ratio = contrastRatio(
+        contract.foreground,
+        contract.background
+      );
+
+      const status =
+        ratio >= contract.minimum
+          ? "PASS"
+          : contract.severity === "error"
+            ? "FAIL"
+            : "WARN";
+
+      console.log(
+        [
+          `  [${status}]`,
+          contract.name.replace(
+            `${variant.name} — `,
+            ""
+          ),
+          `${ratio.toFixed(2)}:1`,
+          `minimum ${contract.minimum}:1`
+        ].join(" ")
+      );
+    }
+  }
 }
 
 function run() {
   const checkOnly = process.argv.includes("--check");
   const validateOnly = process.argv.includes("--validate");
-  const reportContrast =
-    process.argv.includes("--report-contrast");
+  const reportContrast = process.argv.includes(
+    "--report-contrast"
+  );
 
   if (checkOnly && validateOnly) {
     throw new Error(
@@ -2855,56 +3110,34 @@ function run() {
     );
   }
 
-  function printContrastReport(tokens) {
-  console.log("K2 contrast report:");
-
-  for (const contract of CONTRAST_CONTRACTS) {
-    const foreground = getValueByPath(
-      tokens,
-      contract.foreground
-    );
-
-    const background = getValueByPath(
-      tokens,
-      contract.background
-    );
-
-    const ratio = contrastRatio(
-      foreground,
-      background
-    );
-
-    const status =
-      ratio >= contract.minimum ? "PASS" : "FAIL";
-
-    console.log(
-      [
-        `  [${status}]`,
-        contract.name,
-        `${ratio.toFixed(2)}:1`,
-        `minimum ${contract.minimum}:1`
-      ].join(" ")
-    );
-  }
-}
-
   const rawTokens = readJson(TOKENS_PATH);
 
   validateRawTokens(rawTokens);
 
-  const resolvedTokens = resolveTokens(rawTokens);
+  const resolvedVariantTokens =
+    resolveVariantTokenTrees(rawTokens);
 
-  validateResolvedTokens(resolvedTokens);
+  for (const variantName of REQUIRED_VARIANTS) {
+    const variantTokens =
+      resolvedVariantTokens[variantName];
 
-  validateContrastContracts(resolvedTokens);
+    validateResolvedTokens(variantTokens);
 
-  if (reportContrast) {
-    printContrastReport(resolvedTokens);
+    validateContrastContracts(
+      variantTokens,
+      variantName
+    );
   }
 
-  const generatedTheme = buildCoherenceTheme(resolvedTokens);
-  const generatedSource = serializeJson(generatedTheme);
+  if (reportContrast) {
+    printContrastReport(
+      resolvedVariantTokens
+    );
+  }
 
+  /*
+   * Validation must not generate or modify theme files.
+   */
   if (validateOnly) {
     console.log(
       "K2 token architecture and contrast contracts are valid."
@@ -2912,18 +3145,66 @@ function run() {
     return;
   }
 
+  const generatedThemes = buildAllThemes(
+    resolvedVariantTokens
+  );
+
+  const generatedSources = Object.fromEntries(
+    Object.entries(generatedThemes).map(
+      ([currentVariantName, theme]) => [
+        currentVariantName,
+        serializeJson(theme)
+      ]
+    )
+  );
+
   if (checkOnly) {
-    if (!fs.existsSync(OUTPUT_PATH)) {
-      throw new Error(
-        "Generated theme does not exist. Run `npm run build` first."
+    const outOfDateThemes = [];
+
+    for (
+      const currentVariantName of REQUIRED_VARIANTS
+    ) {
+      const outputPath =
+        THEME_OUTPUTS[currentVariantName];
+
+      if (!outputPath) {
+        outOfDateThemes.push(
+          `${currentVariantName}: output path is not configured`
+        );
+        continue;
+      }
+
+      if (!fs.existsSync(outputPath)) {
+        outOfDateThemes.push(
+          `${currentVariantName}: file does not exist`
+        );
+        continue;
+      }
+
+      const existingSource = fs.readFileSync(
+        outputPath,
+        "utf8"
       );
+
+      if (
+        existingSource !==
+        generatedSources[currentVariantName]
+      ) {
+        outOfDateThemes.push(
+          `${currentVariantName}: generated file is out of date`
+        );
+      }
     }
 
-    const existingSource = fs.readFileSync(OUTPUT_PATH, "utf8");
-
-    if (existingSource !== generatedSource) {
+    if (outOfDateThemes.length > 0) {
       throw new Error(
-        "Generated theme is out of date. Run `npm run build` and commit the result."
+        [
+          "Generated themes are not synchronized:",
+          ...outOfDateThemes.map(
+            (item) => `  - ${item}`
+          ),
+          "Run `npm run build` and commit the results."
+        ].join("\n")
       );
     }
 
@@ -2931,16 +3212,45 @@ function run() {
     return;
   }
 
-  ensureOutputDirectory();
-  fs.writeFileSync(OUTPUT_PATH, generatedSource, "utf8");
+  for (
+    const currentVariantName of REQUIRED_VARIANTS
+  ) {
+    const outputPath =
+      THEME_OUTPUTS[currentVariantName];
 
-  console.log(
-    `Generated ${path.relative(ROOT_DIR, OUTPUT_PATH)}`
-  );
+    if (!outputPath) {
+      throw new Error(
+        `Missing output path for variant: ` +
+        currentVariantName
+      );
+    }
+
+    fs.mkdirSync(
+      path.dirname(outputPath),
+      { recursive: true }
+    );
+
+    fs.writeFileSync(
+      outputPath,
+      generatedSources[currentVariantName],
+      "utf8"
+    );
+
+    console.log(
+      `Generated ${path.relative(
+        ROOT_DIR,
+        outputPath
+      )}`
+    );
+  }
 }
 
 try {
   run();
 } catch (error) {
-  fail(error instanceof Error ? error.message : String(error));
+  fail(
+    error instanceof Error
+      ? error.message
+      : String(error)
+  );
 }
