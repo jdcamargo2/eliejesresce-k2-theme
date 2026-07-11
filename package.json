@@ -22,6 +22,7 @@
     "build": "node scripts/build.js",
     "validate": "node scripts/build.js --validate",
     "check:themes": "node scripts/build.js --check",
+    "report:contrast": "node scripts/build.js --validate --report-contrast",
     "test": "npm run validate && npm run check:themes"
   },
   "contributes": {

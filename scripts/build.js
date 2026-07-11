@@ -89,6 +89,72 @@ const REQUIRED_COHERENCE_SURFACES = [
   "active"
 ];
 
+const CONTRAST_CONTRACTS = [
+  {
+    name: "Editor primary text",
+    foreground: "components.syntax.foreground",
+    background: "variants.coherence.surface.editor",
+    minimum: 4.5,
+    severity: "error"
+  },
+  {
+    name: "Sidebar primary text",
+    foreground: "semantic.contextSecondary",
+    background: "variants.coherence.surface.sidebar",
+    minimum: 4.5,
+    severity: "error"
+  },
+  {
+    name: "Input text",
+    foreground: "semantic.context",
+    background: "variants.coherence.surface.input",
+    minimum: 4.5,
+    severity: "error"
+  },
+  {
+    name: "Quick input text",
+    foreground: "semantic.context",
+    background: "variants.coherence.surface.overlay",
+    minimum: 4.5,
+    severity: "error"
+  },
+  {
+    name: "Button text",
+    foreground: "variants.coherence.surface.activityBar",
+    background: "variants.coherence.surface.button",
+    minimum: 3,
+    severity: "error"
+  },
+  {
+    name: "Comments",
+    foreground: "components.syntax.comment",
+    background: "variants.coherence.surface.editor",
+    minimum: 3,
+    severity: "warning"
+  },
+  {
+    name: "Line numbers",
+    foreground: "semantic.contextFaint",
+    background: "variants.coherence.surface.editor",
+    minimum: 3,
+    severity: "warning"
+  },
+  {
+    name: "Ghost text",
+    foreground: "semantic.contextFaint",
+    background: "variants.coherence.surface.editor",
+    minimum: 2.5,
+    severity: "warning"
+  },
+  {
+    name: "Inlay hints",
+    foreground: "semantic.contextMuted",
+    background: "variants.coherence.surface.editorElevated",
+    minimum: 3,
+    severity: "warning"
+  }
+];
+
 function fail(message) {
   console.error(`K2 build failed: ${message}`);
   process.exitCode = 1;
@@ -324,6 +390,72 @@ function validateResolvedTokens(tokens) {
   validateCoherenceVariant(tokens);
 }
 
+function validateContrastContracts(tokens) {
+  const warnings = [];
+  const failures = [];
+
+  for (const contract of CONTRAST_CONTRACTS) {
+    const foreground = getValueByPath(
+      tokens,
+      contract.foreground
+    );
+
+    const background = getValueByPath(
+      tokens,
+      contract.background
+    );
+
+    assertColor(
+      foreground,
+      `contrast.${contract.name}.foreground`
+    );
+
+    assertColor(
+      background,
+      `contrast.${contract.name}.background`
+    );
+
+    const ratio = contrastRatio(
+      foreground,
+      background
+    );
+
+    const formattedRatio = ratio.toFixed(2);
+
+    if (ratio >= contract.minimum) {
+      continue;
+    }
+
+    const message =
+      `${contract.name}: ${formattedRatio}:1 ` +
+      `(minimum ${contract.minimum}:1) — ` +
+      `${foreground} on ${background}`;
+
+    if (contract.severity === "error") {
+      failures.push(message);
+    } else {
+      warnings.push(message);
+    }
+  }
+
+  if (warnings.length > 0) {
+    console.warn("K2 contrast warnings:");
+
+    for (const warning of warnings) {
+      console.warn(`  - ${warning}`);
+    }
+  }
+
+  if (failures.length > 0) {
+    throw new Error(
+      [
+        "Critical contrast contract failed:",
+        ...failures.map((failure) => `  - ${failure}`)
+      ].join("\n")
+    );
+  }
+}
+
 function resolveValue(value, root, resolutionStack = []) {
   if (Array.isArray(value)) {
     return value.map((item) =>
@@ -378,6 +510,121 @@ function assertColor(value, label) {
   }
 
   return value.toUpperCase();
+}
+
+function hexToRgba(hexColor) {
+  const normalized = hexColor.slice(1);
+
+  if (normalized.length !== 6 && normalized.length !== 8) {
+    throw new Error(
+      `Unsupported color format for contrast calculation: ${hexColor}`
+    );
+  }
+
+  const red = Number.parseInt(normalized.slice(0, 2), 16);
+  const green = Number.parseInt(normalized.slice(2, 4), 16);
+  const blue = Number.parseInt(normalized.slice(4, 6), 16);
+
+  const alpha =
+    normalized.length === 8
+      ? Number.parseInt(normalized.slice(6, 8), 16) / 255
+      : 1;
+
+  return {
+    red,
+    green,
+    blue,
+    alpha
+  };
+}
+
+function compositeChannel(foreground, background, alpha) {
+  return Math.round(
+    foreground * alpha + background * (1 - alpha)
+  );
+}
+
+function compositeColors(foregroundHex, backgroundHex) {
+  const foreground = hexToRgba(foregroundHex);
+  const background = hexToRgba(backgroundHex);
+
+  if (background.alpha !== 1) {
+    throw new Error(
+      `Contrast background must be opaque: ${backgroundHex}`
+    );
+  }
+
+  if (foreground.alpha === 1) {
+    return foregroundHex;
+  }
+
+  const red = compositeChannel(
+    foreground.red,
+    background.red,
+    foreground.alpha
+  );
+
+  const green = compositeChannel(
+    foreground.green,
+    background.green,
+    foreground.alpha
+  );
+
+  const blue = compositeChannel(
+    foreground.blue,
+    background.blue,
+    foreground.alpha
+  );
+
+  return `#${[red, green, blue]
+    .map((channel) =>
+      channel.toString(16).padStart(2, "0")
+    )
+    .join("")
+    .toUpperCase()}`;
+}
+
+function srgbChannelToLinear(channel) {
+  const normalized = channel / 255;
+
+  return normalized <= 0.04045
+    ? normalized / 12.92
+    : Math.pow((normalized + 0.055) / 1.055, 2.4);
+}
+
+function relativeLuminance(hexColor) {
+  const { red, green, blue } = hexToRgba(hexColor);
+
+  return (
+    0.2126 * srgbChannelToLinear(red) +
+    0.7152 * srgbChannelToLinear(green) +
+    0.0722 * srgbChannelToLinear(blue)
+  );
+}
+
+function contrastRatio(foregroundHex, backgroundHex) {
+  const opaqueForeground = compositeColors(
+    foregroundHex,
+    backgroundHex
+  );
+
+  const foregroundLuminance =
+    relativeLuminance(opaqueForeground);
+
+  const backgroundLuminance =
+    relativeLuminance(backgroundHex);
+
+  const lighter = Math.max(
+    foregroundLuminance,
+    backgroundLuminance
+  );
+
+  const darker = Math.min(
+    foregroundLuminance,
+    backgroundLuminance
+  );
+
+  return (lighter + 0.05) / (darker + 0.05);
 }
 
 function createTokenColor(name, scope, foreground, fontStyle) {
@@ -768,7 +1015,7 @@ function buildCoherenceTheme(tokens) {
       "button.background"
     ),
     "button.foreground": assertColor(
-      tokens.semantic.contextStrong,
+      surface.activityBar,
       "button.foreground"
     ),
     "button.hoverBackground": assertColor(
@@ -1392,12 +1639,47 @@ function ensureOutputDirectory() {
 function run() {
   const checkOnly = process.argv.includes("--check");
   const validateOnly = process.argv.includes("--validate");
+  const reportContrast =
+    process.argv.includes("--report-contrast");
 
   if (checkOnly && validateOnly) {
     throw new Error(
       "Use either --check or --validate, not both"
     );
   }
+
+  function printContrastReport(tokens) {
+  console.log("K2 contrast report:");
+
+  for (const contract of CONTRAST_CONTRACTS) {
+    const foreground = getValueByPath(
+      tokens,
+      contract.foreground
+    );
+
+    const background = getValueByPath(
+      tokens,
+      contract.background
+    );
+
+    const ratio = contrastRatio(
+      foreground,
+      background
+    );
+
+    const status =
+      ratio >= contract.minimum ? "PASS" : "FAIL";
+
+    console.log(
+      [
+        `  [${status}]`,
+        contract.name,
+        `${ratio.toFixed(2)}:1`,
+        `minimum ${contract.minimum}:1`
+      ].join(" ")
+    );
+  }
+}
 
   const rawTokens = readJson(TOKENS_PATH);
 
@@ -1407,11 +1689,19 @@ function run() {
 
   validateResolvedTokens(resolvedTokens);
 
+  validateContrastContracts(resolvedTokens);
+
+  if (reportContrast) {
+    printContrastReport(resolvedTokens);
+  }
+
   const generatedTheme = buildCoherenceTheme(resolvedTokens);
   const generatedSource = serializeJson(generatedTheme);
 
   if (validateOnly) {
-    console.log("K2 token architecture is valid.");
+    console.log(
+      "K2 token architecture and contrast contracts are valid."
+    );
     return;
   }
 

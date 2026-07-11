@@ -5,7 +5,7 @@
   "semanticHighlighting": true,
   "colors": {
     "foreground": "#A6ADB6",
-    "disabledForeground": "#515861",
+    "disabledForeground": "#68717C",
     "descriptionForeground": "#68717C",
     "errorForeground": "#D55561",
     "focusBorder": "#7698EE",
@@ -21,7 +21,7 @@
     "editor.selectionBackground": "#7698EE47",
     "editor.inactiveSelectionBackground": "#7698EE2E",
     "editor.lineHighlightBackground": "#7698EE1A",
-    "editorLineNumber.foreground": "#515861",
+    "editorLineNumber.foreground": "#68717C",
     "editorLineNumber.activeForeground": "#A6ADB6",
     "editorBracketMatch.border": "#7698EE",
     "editorBracketMatch.background": "#7698EE2E",
@@ -89,7 +89,7 @@
     "pickerGroup.border": "#2B2F34",
     "pickerGroup.foreground": "#68B8C3",
     "button.background": "#5F82D8",
-    "button.foreground": "#DDE0E4",
+    "button.foreground": "#0B0C0E",
     "button.hoverBackground": "#7698EE",
     "badge.background": "#7698EE",
     "badge.foreground": "#0B0C0E",
@@ -102,7 +102,7 @@
     "editorSuggestWidget.selectedBackground": "#7698EE2E",
     "editorHoverWidget.background": "#1E2023",
     "editorHoverWidget.border": "#2B2F34",
-    "editorGhostText.foreground": "#515861",
+    "editorGhostText.foreground": "#68717C",
     "editorInlayHint.foreground": "#68717C",
     "editorInlayHint.background": "#1A1B1E",
     "editorInlayHint.typeForeground": "#68B8C3",
@@ -121,7 +121,7 @@
     "gitDecoration.addedResourceForeground": "#78AAA3",
     "gitDecoration.deletedResourceForeground": "#D55561",
     "gitDecoration.conflictingResourceForeground": "#CDA65E",
-    "gitDecoration.ignoredResourceForeground": "#515861"
+    "gitDecoration.ignoredResourceForeground": "#68717C"
   },
   "tokenColors": [
     {
@@ -280,7 +280,7 @@
         "punctuation.definition.comment"
       ],
       "settings": {
-        "foreground": "#515861",
+        "foreground": "#68717C",
         "fontStyle": "italic"
       }
     },
