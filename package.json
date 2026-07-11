@@ -1,65 +1,35 @@
 {
   "name": "eliejesresce-k2-theme",
-  "displayName": "Eliejesresce K2 Theme (v2.1)",
-  "description": "VS Code theme with Eliejesresce K2 identity: status bar mantras, Ritual Mode and Gold Block.",
-  "version": "2.1.0",
+  "displayName": "Eliejesresce K2",
+  "description": "A precise VS Code theme system designed to reveal structure, reduce visual noise and preserve semantic coherence.",
+  "version": "3.0.0",
   "publisher": "eliejesresce",
   "engines": {
     "vscode": "^1.70.0"
   },
   "icon": "icon.png",
-  "main": "./extension.js",
-  "activationEvents": [
-    "*"
-  ],
   "categories": [
     "Themes"
   ],
+  "keywords": [
+    "theme",
+    "dark theme",
+    "k2",
+    "quantum",
+    "semantic highlighting"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js",
+    "check:themes": "node scripts/build.js --check",
+    "test": "npm run build && npm run check:themes"
+  },
   "contributes": {
     "themes": [
       {
-        "label": "Eliejesresce K2 Dark v2",
+        "label": "K2 Coherence",
         "uiTheme": "vs-dark",
-        "path": "./themes/eliejesresce-k2-dark-v2.json"
-      },
-      {
-        "label": "Eliejesresce K2 Dark OLED v2",
-        "uiTheme": "vs-dark",
-        "path": "./themes/eliejesresce-k2-dark-oled-v2.json"
-      },
-      {
-        "label": "Eliejesresce K2 Dim v2",
-        "uiTheme": "vs-dark",
-        "path": "./themes/eliejesresce-k2-dim-v2.json"
+        "path": "./themes/k2-coherence.json"
       }
-    ],
-    "commands": [
-      {
-        "command": "eliejesresceK2.cycleMantra",
-        "title": "Eliejesresce: Cycle Mantra"
-      },
-      {
-        "command": "eliejesresceK2.toggleRitualMode",
-        "title": "Eliejesresce: Toggle Ritual Mode"
-      },
-      {
-        "command": "eliejesresceK2.toggleGoldMode",
-        "title": "Eliejesresce: Toggle Gold Block"
-      }
-    ],
-    "configurationDefaults": {
-      "editor.fontFamily": "IBM Plex Mono, 'Source Code Pro', Consolas, 'Courier New', monospace",
-      "editor.fontLigatures": true,
-      "editor.lineHeight": 22,
-      "editor.letterSpacing": 0.2,
-      "terminal.integrated.fontFamily": "IBM Plex Mono",
-      "editor.cursorBlinking": "phase",
-      "editor.cursorSmoothCaretAnimation": "on",
-      "editor.minimap.enabled": false,
-      "editor.bracketPairColorization.enabled": true,
-      "editor.rulers": [
-        88
-      ]
-    }
+    ]
   }
 }
