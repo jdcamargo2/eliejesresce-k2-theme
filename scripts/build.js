@@ -54,6 +54,33 @@ const REQUIRED_TOKEN_PATHS = [
   "components.states.warning",
   "components.states.error",
 
+  "components.terminal.background",
+  "components.terminal.foreground",
+  "components.terminal.cursor",
+  "components.terminal.black",
+  "components.terminal.brightBlack",
+  "components.terminal.red",
+  "components.terminal.brightRed",
+  "components.terminal.green",
+  "components.terminal.brightGreen",
+  "components.terminal.yellow",
+  "components.terminal.brightYellow",
+  "components.terminal.blue",
+  "components.terminal.brightBlue",
+  "components.terminal.magenta",
+  "components.terminal.brightMagenta",
+  "components.terminal.cyan",
+  "components.terminal.brightCyan",
+  "components.terminal.white",
+  "components.terminal.brightWhite",
+
+  "components.diff.insertedLine",
+  "components.diff.insertedText",
+  "components.diff.removedLine",
+  "components.diff.removedText",
+  "components.diff.modifiedLine",
+  "components.diff.conflict",
+
   "variants.coherence.name",
   "variants.coherence.type",
   "variants.coherence.uiTheme",
@@ -152,7 +179,42 @@ const CONTRAST_CONTRACTS = [
     background: "variants.coherence.surface.editorElevated",
     minimum: 3,
     severity: "warning"
-  }
+  },
+  {
+    name: "Terminal primary text",
+    foreground: "components.terminal.foreground",
+    background: "components.terminal.background",
+    minimum: 4.5,
+    severity: "error"
+  },
+  {
+    name: "Terminal bright black",
+    foreground: "components.terminal.brightBlack",
+    background: "components.terminal.background",
+    minimum: 3,
+    severity: "warning"
+  },
+  {
+    name: "Terminal blue",
+    foreground: "components.terminal.blue",
+    background: "components.terminal.background",
+    minimum: 3,
+    severity: "warning"
+  },
+  {
+    name: "Terminal green",
+    foreground: "components.terminal.green",
+    background: "components.terminal.background",
+    minimum: 3,
+    severity: "warning"
+  },
+  {
+    name: "Terminal red",
+    foreground: "components.terminal.red",
+    background: "components.terminal.background",
+    minimum: 3,
+    severity: "warning"
+  },
 ];
 
 function fail(message) {
@@ -648,6 +710,8 @@ function buildCoherenceTheme(tokens) {
   const syntax = tokens.components.syntax;
   const brackets = tokens.components.brackets;
   const states = tokens.components.states;
+  const terminal = tokens.components.terminal;
+  const diff = tokens.components.diff;
 
   if (!variant || !variant.surface) {
     throw new Error("Missing variants.coherence configuration");
@@ -1134,6 +1198,223 @@ function buildCoherenceTheme(tokens) {
     "editorGutter.deletedBackground": assertColor(
       states.deleted,
       "editorGutter.deletedBackground"
+    ),
+
+    "terminal.background": assertColor(
+      terminal.background,
+      "terminal.background"
+    ),
+    "terminal.foreground": assertColor(
+      terminal.foreground,
+      "terminal.foreground"
+    ),
+    "terminalCursor.foreground": assertColor(
+      terminal.cursor,
+      "terminalCursor.foreground"
+    ),
+    "terminalCursor.background": assertColor(
+      surface.panel,
+      "terminalCursor.background"
+    ),
+
+    "terminal.ansiBlack": assertColor(
+      terminal.black,
+      "terminal.ansiBlack"
+    ),
+    "terminal.ansiBrightBlack": assertColor(
+      terminal.brightBlack,
+      "terminal.ansiBrightBlack"
+    ),
+
+    "terminal.ansiRed": assertColor(
+      terminal.red,
+      "terminal.ansiRed"
+    ),
+    "terminal.ansiBrightRed": assertColor(
+      terminal.brightRed,
+      "terminal.ansiBrightRed"
+    ),
+
+    "terminal.ansiGreen": assertColor(
+      terminal.green,
+      "terminal.ansiGreen"
+    ),
+    "terminal.ansiBrightGreen": assertColor(
+      terminal.brightGreen,
+      "terminal.ansiBrightGreen"
+    ),
+
+    "terminal.ansiYellow": assertColor(
+      terminal.yellow,
+      "terminal.ansiYellow"
+    ),
+    "terminal.ansiBrightYellow": assertColor(
+      terminal.brightYellow,
+      "terminal.ansiBrightYellow"
+    ),
+
+    "terminal.ansiBlue": assertColor(
+      terminal.blue,
+      "terminal.ansiBlue"
+    ),
+    "terminal.ansiBrightBlue": assertColor(
+      terminal.brightBlue,
+      "terminal.ansiBrightBlue"
+    ),
+
+    "terminal.ansiMagenta": assertColor(
+      terminal.magenta,
+      "terminal.ansiMagenta"
+    ),
+    "terminal.ansiBrightMagenta": assertColor(
+      terminal.brightMagenta,
+      "terminal.ansiBrightMagenta"
+    ),
+
+    "terminal.ansiCyan": assertColor(
+      terminal.cyan,
+      "terminal.ansiCyan"
+    ),
+    "terminal.ansiBrightCyan": assertColor(
+      terminal.brightCyan,
+      "terminal.ansiBrightCyan"
+    ),
+
+    "terminal.ansiWhite": assertColor(
+      terminal.white,
+      "terminal.ansiWhite"
+    ),
+    "terminal.ansiBrightWhite": assertColor(
+      terminal.brightWhite,
+      "terminal.ansiBrightWhite"
+    ),
+
+    "terminal.selectionBackground": assertColor(
+      surface.selection,
+      "terminal.selectionBackground"
+    ),
+
+    "terminal.border": assertColor(
+      surface.border,
+      "terminal.border"
+    ),
+
+    "editorError.foreground": assertColor(
+      states.error,
+      "editorError.foreground"
+    ),
+    "editorError.border": assertColor(
+      tokens.palette.transparent,
+      "editorError.border"
+    ),
+
+    "editorWarning.foreground": assertColor(
+      states.warning,
+      "editorWarning.foreground"
+    ),
+    "editorWarning.border": assertColor(
+      tokens.palette.transparent,
+      "editorWarning.border"
+    ),
+
+    "editorInfo.foreground": assertColor(
+      states.information,
+      "editorInfo.foreground"
+    ),
+    "editorInfo.border": assertColor(
+      tokens.palette.transparent,
+      "editorInfo.border"
+    ),
+
+    "editorHint.foreground": assertColor(
+      tokens.semantic.contextMuted,
+      "editorHint.foreground"
+    ),
+    "editorHint.border": assertColor(
+      tokens.palette.transparent,
+      "editorHint.border"
+    ),
+
+    "problemsErrorIcon.foreground": assertColor(
+      states.error,
+      "problemsErrorIcon.foreground"
+    ),
+    "problemsWarningIcon.foreground": assertColor(
+      states.warning,
+      "problemsWarningIcon.foreground"
+    ),
+    "problemsInfoIcon.foreground": assertColor(
+      states.information,
+      "problemsInfoIcon.foreground"
+    ),
+
+    "diffEditor.insertedLineBackground": assertColor(
+      diff.insertedLine,
+      "diffEditor.insertedLineBackground"
+    ),
+    "diffEditor.insertedTextBackground": assertColor(
+      diff.insertedText,
+      "diffEditor.insertedTextBackground"
+    ),
+
+    "diffEditor.removedLineBackground": assertColor(
+      diff.removedLine,
+      "diffEditor.removedLineBackground"
+    ),
+    "diffEditor.removedTextBackground": assertColor(
+      diff.removedText,
+      "diffEditor.removedTextBackground"
+    ),
+
+    "diffEditor.diagonalFill": assertColor(
+      surface.borderSubtle,
+      "diffEditor.diagonalFill"
+    ),
+
+    "diffEditor.border": assertColor(
+      surface.border,
+      "diffEditor.border"
+    ),
+
+    "diffEditorGutter.insertedLineBackground": assertColor(
+      states.added,
+      "diffEditorGutter.insertedLineBackground"
+    ),
+    "diffEditorGutter.removedLineBackground": assertColor(
+      states.deleted,
+      "diffEditorGutter.removedLineBackground"
+    ),
+
+    "merge.currentHeaderBackground": assertColor(
+      diff.modifiedLine,
+      "merge.currentHeaderBackground"
+    ),
+    "merge.currentContentBackground": assertColor(
+      surface.selectionInactive,
+      "merge.currentContentBackground"
+    ),
+
+    "merge.incomingHeaderBackground": assertColor(
+      diff.insertedLine,
+      "merge.incomingHeaderBackground"
+    ),
+    "merge.incomingContentBackground": assertColor(
+      diff.insertedText,
+      "merge.incomingContentBackground"
+    ),
+
+    "merge.commonHeaderBackground": assertColor(
+      diff.conflict,
+      "merge.commonHeaderBackground"
+    ),
+    "merge.commonContentBackground": assertColor(
+      diff.conflict,
+      "merge.commonContentBackground"
+    ),
+
+    "merge.border": assertColor(
+      states.warning,
+      "merge.border"
     ),
 
     "gitDecoration.modifiedResourceForeground": assertColor(
