@@ -173,6 +173,300 @@
   },
   "tokenColors": [
     {
+      "name": "Python self and cls",
+      "scope": [
+        "variable.language.special.self.python",
+        "variable.parameter.function.language.special.self.python",
+        "variable.parameter.function.language.special.cls.python"
+      ],
+      "settings": {
+        "foreground": "#A18BD4"
+      }
+    },
+    {
+      "name": "Python special methods",
+      "scope": [
+        "entity.name.function.magic.python"
+      ],
+      "settings": {
+        "foreground": "#BAA7E2"
+      }
+    },
+    {
+      "name": "Python built-ins",
+      "scope": [
+        "support.function.builtin.python",
+        "support.type.python",
+        "support.variable.python"
+      ],
+      "settings": {
+        "foreground": "#68B8C3"
+      }
+    },
+    {
+      "name": "Python exceptions",
+      "scope": [
+        "support.type.exception.python",
+        "entity.name.type.exception.python"
+      ],
+      "settings": {
+        "foreground": "#D55561"
+      }
+    },
+    {
+      "name": "Python decorators",
+      "scope": [
+        "meta.function.decorator.python",
+        "entity.name.function.decorator.python",
+        "punctuation.definition.decorator.python"
+      ],
+      "settings": {
+        "foreground": "#CDA65E"
+      }
+    },
+    {
+      "name": "Java package and import keywords",
+      "scope": [
+        "keyword.other.package.java",
+        "keyword.control.import.java"
+      ],
+      "settings": {
+        "foreground": "#7698EE"
+      }
+    },
+    {
+      "name": "Java declaration keywords",
+      "scope": [
+        "storage.type.class.java",
+        "storage.type.interface.java",
+        "storage.type.enum.java",
+        "storage.type.record.java"
+      ],
+      "settings": {
+        "foreground": "#91AFF4"
+      }
+    },
+    {
+      "name": "Java primitive types",
+      "scope": [
+        "storage.type.primitive.java"
+      ],
+      "settings": {
+        "foreground": "#89CDD5"
+      }
+    },
+    {
+      "name": "Java annotations",
+      "scope": [
+        "storage.type.annotation.java",
+        "meta.declaration.annotation.java",
+        "entity.name.type.annotation.java"
+      ],
+      "settings": {
+        "foreground": "#CDA65E"
+      }
+    },
+    {
+      "name": "Java constructors",
+      "scope": [
+        "entity.name.function.constructor.java",
+        "meta.method.identifier.java"
+      ],
+      "settings": {
+        "foreground": "#BAA7E2"
+      }
+    },
+    {
+      "name": "Java constants",
+      "scope": [
+        "variable.other.constant.java",
+        "constant.other.java"
+      ],
+      "settings": {
+        "foreground": "#CDA65E"
+      }
+    },
+    {
+      "name": "Java primitive types",
+      "scope": [
+        "storage.type.primitive.java",
+        "storage.type.java"
+      ],
+      "settings": {
+        "foreground": "#89CDD5"
+      }
+    },
+    {
+      "name": "Import and export keywords",
+      "scope": [
+        "keyword.control.import",
+        "keyword.control.export",
+        "keyword.control.from",
+        "keyword.control.as"
+      ],
+      "settings": {
+        "foreground": "#7698EE"
+      }
+    },
+    {
+      "name": "Module and package paths",
+      "scope": [
+        "entity.name.module",
+        "support.module",
+        "string.quoted.module"
+      ],
+      "settings": {
+        "foreground": "#A6ADB6"
+      }
+    },
+    {
+      "name": "Constructors",
+      "scope": [
+        "entity.name.function.constructor",
+        "meta.function.constructor",
+        "support.class"
+      ],
+      "settings": {
+        "foreground": "#BAA7E2"
+      }
+    },
+    {
+      "name": "Built-in objects",
+      "scope": [
+        "support.class",
+        "support.type",
+        "support.variable",
+        "support.constant"
+      ],
+      "settings": {
+        "foreground": "#68B8C3"
+      }
+    },
+    {
+      "name": "Regular expressions",
+      "scope": [
+        "string.regexp",
+        "string.regexp.js",
+        "string.regexp.ts"
+      ],
+      "settings": {
+        "foreground": "#A18BD4"
+      }
+    },
+    {
+      "name": "Environment variable keys",
+      "scope": [
+        "variable.other.env",
+        "variable.other.assignment.env",
+        "entity.name.variable.env"
+      ],
+      "settings": {
+        "foreground": "#7698EE"
+      }
+    },
+    {
+      "name": "Environment variable values",
+      "scope": [
+        "string.unquoted.env",
+        "string.quoted.double.env",
+        "string.quoted.single.env"
+      ],
+      "settings": {
+        "foreground": "#78AAA3"
+      }
+    },
+    {
+      "name": "YAML property keys",
+      "scope": [
+        "entity.name.tag.yaml",
+        "meta.mapping.key.yaml string.unquoted.plain.out.yaml",
+        "meta.mapping.key.yaml string.unquoted.plain.in.yaml"
+      ],
+      "settings": {
+        "foreground": "#7698EE"
+      }
+    },
+    {
+      "name": "YAML plain values",
+      "scope": [
+        "meta.mapping.value.yaml string.unquoted.plain.out.yaml",
+        "meta.mapping.value.yaml string.unquoted.plain.in.yaml",
+        "meta.block.mapping.value.yaml string.unquoted.plain.out.yaml"
+      ],
+      "settings": {
+        "foreground": "#78AAA3"
+      }
+    },
+    {
+      "name": "YAML anchors",
+      "scope": [
+        "entity.name.type.anchor.yaml",
+        "variable.other.anchor.yaml"
+      ],
+      "settings": {
+        "foreground": "#A18BD4"
+      }
+    },
+    {
+      "name": "YAML aliases",
+      "scope": [
+        "variable.other.alias.yaml"
+      ],
+      "settings": {
+        "foreground": "#68B8C3"
+      }
+    },
+    {
+      "name": "YAML constants",
+      "scope": [
+        "constant.language.yaml",
+        "constant.numeric.yaml"
+      ],
+      "settings": {
+        "foreground": "#CDA65E"
+      }
+    },
+    {
+      "name": "JSON property keys",
+      "scope": [
+        "support.type.property-name.json"
+      ],
+      "settings": {
+        "foreground": "#7698EE"
+      }
+    },
+    {
+      "name": "JSON string values",
+      "scope": [
+        "meta.structure.dictionary.value.json string.quoted.double.json",
+        "meta.structure.array.json string.quoted.double.json"
+      ],
+      "settings": {
+        "foreground": "#78AAA3"
+      }
+    },
+    {
+      "name": "JSON constants",
+      "scope": [
+        "constant.language.json"
+      ],
+      "settings": {
+        "foreground": "#CDA65E"
+      }
+    },
+    {
+      "name": "JSON punctuation",
+      "scope": [
+        "punctuation.support.type.property-name.begin.json",
+        "punctuation.support.type.property-name.end.json",
+        "punctuation.separator.dictionary.key-value.json",
+        "punctuation.separator.dictionary.pair.json"
+      ],
+      "settings": {
+        "foreground": "#68717C"
+      }
+    },
+    {
       "name": "Markdown headings",
       "scope": [
         "markup.heading",
@@ -355,6 +649,24 @@
       }
     },
     {
+      "name": "Java package paths",
+      "scope": [
+        "meta.package.java storage.modifier.package.java"
+      ],
+      "settings": {
+        "foreground": "#A6ADB6"
+      }
+    },
+    {
+      "name": "Java import paths",
+      "scope": [
+        "meta.import.java storage.modifier.import.java"
+      ],
+      "settings": {
+        "foreground": "#A6ADB6"
+      }
+    },
+    {
       "name": "Control flow",
       "scope": [
         "keyword.control",
@@ -383,17 +695,204 @@
       }
     },
     {
-      "name": "Types",
+      "name": "TypeScript declaration keywords",
+      "scope": [
+        "storage.type.interface.ts",
+        "storage.type.class.ts",
+        "storage.type.enum.ts",
+        "storage.type.type.ts",
+        "storage.type.namespace.ts",
+        "storage.type.interface.tsx",
+        "storage.type.class.tsx"
+      ],
+      "settings": {
+        "foreground": "#91AFF4"
+      }
+    },
+    {
+      "name": "TypeScript type names",
+      "scope": [
+        "entity.name.type.interface.ts",
+        "entity.name.type.class.ts",
+        "entity.name.type.alias.ts",
+        "entity.name.type.enum.ts",
+        "entity.name.type.interface.tsx",
+        "entity.name.type.class.tsx"
+      ],
+      "settings": {
+        "foreground": "#89CDD5"
+      }
+    },
+    {
+      "name": "Rust declaration keywords",
+      "scope": [
+        "storage.type.struct.rust",
+        "storage.type.enum.rust",
+        "storage.type.trait.rust",
+        "storage.type.type.rust",
+        "storage.type.union.rust"
+      ],
+      "settings": {
+        "foreground": "#91AFF4"
+      }
+    },
+    {
+      "name": "Rust types",
+      "scope": [
+        "entity.name.type.struct.rust",
+        "entity.name.type.enum.rust",
+        "entity.name.type.trait.rust",
+        "entity.name.type.rust",
+        "support.type.rust",
+        "storage.type.numeric.rust",
+        "storage.type.primitive.rust"
+      ],
+      "settings": {
+        "foreground": "#89CDD5"
+      }
+    },
+    {
+      "name": "Rust functions",
+      "scope": [
+        "entity.name.function.rust",
+        "meta.function.call.rust entity.name.function.rust"
+      ],
+      "settings": {
+        "foreground": "#BAA7E2"
+      }
+    },
+    {
+      "name": "Rust macros",
+      "scope": [
+        "entity.name.function.macro.rust",
+        "support.macro.rust",
+        "meta.macro.rust"
+      ],
+      "settings": {
+        "foreground": "#BAA7E2"
+      }
+    },
+    {
+      "name": "Rust lifetimes",
+      "scope": [
+        "entity.name.type.lifetime.rust",
+        "storage.modifier.lifetime.rust",
+        "variable.other.lifetime.rust"
+      ],
+      "settings": {
+        "foreground": "#CDA65E"
+      }
+    },
+    {
+      "name": "Rust module paths",
+      "scope": [
+        "entity.name.namespace.rust",
+        "entity.name.module.rust",
+        "meta.use.rust entity.name.namespace.rust"
+      ],
+      "settings": {
+        "foreground": "#A6ADB6"
+      }
+    },
+    {
+      "name": "Rust constants",
+      "scope": [
+        "variable.other.constant.rust",
+        "constant.other.rust"
+      ],
+      "settings": {
+        "foreground": "#CDA65E"
+      }
+    },
+    {
+      "name": "C preprocessor directives",
+      "scope": [
+        "meta.preprocessor.c",
+        "keyword.control.directive.c",
+        "keyword.control.import.c",
+        "punctuation.definition.directive.c"
+      ],
+      "settings": {
+        "foreground": "#7698EE"
+      }
+    },
+    {
+      "name": "C primitive types",
+      "scope": [
+        "storage.type.c",
+        "storage.type.built-in.c",
+        "support.type.c"
+      ],
+      "settings": {
+        "foreground": "#89CDD5"
+      }
+    },
+    {
+      "name": "C functions",
+      "scope": [
+        "entity.name.function.c",
+        "meta.function.c entity.name.function.c"
+      ],
+      "settings": {
+        "foreground": "#BAA7E2"
+      }
+    },
+    {
+      "name": "C constants",
+      "scope": [
+        "constant.other.c",
+        "variable.other.constant.c"
+      ],
+      "settings": {
+        "foreground": "#CDA65E"
+      }
+    },
+    {
+      "name": "C labels",
+      "scope": [
+        "entity.name.label.c"
+      ],
+      "settings": {
+        "foreground": "#A18BD4"
+      }
+    },
+    {
+      "name": "C header paths",
+      "scope": [
+        "string.quoted.other.lt-gt.include.c",
+        "string.quoted.double.include.c"
+      ],
+      "settings": {
+        "foreground": "#A6ADB6"
+      }
+    },
+    {
+      "name": "Named types",
       "scope": [
         "entity.name.type",
         "entity.name.class",
         "entity.name.interface",
         "entity.name.struct",
-        "support.type",
-        "storage.type"
+        "entity.name.enum",
+        "support.type"
       ],
       "settings": {
         "foreground": "#89CDD5"
+      }
+    },
+    {
+      "name": "Type declaration keywords",
+      "scope": [
+        "storage.type.class",
+        "storage.type.interface",
+        "storage.type.struct",
+        "storage.type.enum",
+        "storage.type.trait",
+        "storage.type.union",
+        "storage.type.record"
+      ],
+      "settings": {
+        "foreground": "#91AFF4"
       }
     },
     {
@@ -575,8 +1074,28 @@
     }
   ],
   "semanticTokenColors": {
-    "variable": "#C2C7CE",
+    "class:java": "#89CDD5",
+    "namespace:java": "#A6ADB6",
+    "class.defaultLibrary:java": "#68B8C3",
+    "type.defaultLibrary:java": "#68B8C3",
+    "variable.defaultLibrary:python": "#68B8C3",
+    "function.defaultLibrary:python": "#68B8C3",
+    "method:python": "#A18BD4",
+    "type.declaration": "#89CDD5",
+    "class.declaration": "#89CDD5",
+    "interface.declaration": "#89CDD5",
+    "struct.declaration": "#89CDD5",
+    "namespace": "#A6ADB6",
     "variable.readonly": "#7698EE",
+    "label": "#A18BD4",
+    "keyword": "#7698EE",
+    "regexp": "#A18BD4",
+    "property.readonly": "#7698EE",
+    "method.static": "#BAA7E2",
+    "function.static": "#BAA7E2",
+    "class.defaultLibrary": "#68B8C3",
+    "type.defaultLibrary": "#68B8C3",
+    "variable": "#C2C7CE",
     "variable.defaultLibrary": "#68B8C3",
     "parameter": "#A6ADB6",
     "property": "#68B8C3",
@@ -589,7 +1108,6 @@
     "struct": "#89CDD5",
     "type": "#89CDD5",
     "typeParameter": "#89CDD5",
-    "namespace": "#68B8C3",
     "enum": "#89CDD5",
     "enumMember": "#CDA65E",
     "decorator": "#CDA65E"

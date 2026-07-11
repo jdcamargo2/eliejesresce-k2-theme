@@ -1441,6 +1441,260 @@ function buildCoherenceTheme(tokens) {
 
   const tokenColors = [
     createTokenColor(
+      "Python self and cls",
+      [
+        "variable.language.special.self.python",
+        "variable.parameter.function.language.special.self.python",
+        "variable.parameter.function.language.special.cls.python"
+      ],
+      syntax.selfReference
+    ),
+
+    createTokenColor(
+      "Python special methods",
+      [
+        "entity.name.function.magic.python"
+      ],
+      syntax.specialMethod
+    ),
+
+    createTokenColor(
+      "Python built-ins",
+      [
+        "support.function.builtin.python",
+        "support.type.python",
+        "support.variable.python"
+      ],
+      syntax.pythonBuiltin
+    ),
+
+    createTokenColor(
+      "Python exceptions",
+      [
+        "support.type.exception.python",
+        "entity.name.type.exception.python"
+      ],
+      syntax.exception
+    ),
+
+    createTokenColor(
+      "Python decorators",
+      [
+        "meta.function.decorator.python",
+        "entity.name.function.decorator.python",
+        "punctuation.definition.decorator.python"
+      ],
+      syntax.decorator
+    ),
+    createTokenColor(
+      "Java package and import keywords",
+      [
+        "keyword.other.package.java",
+        "keyword.control.import.java"
+      ],
+      syntax.import
+    ),
+
+    createTokenColor(
+      "Java declaration keywords",
+      [
+        "storage.type.class.java",
+        "storage.type.interface.java",
+        "storage.type.enum.java",
+        "storage.type.record.java"
+      ],
+      syntax.declaration
+    ),
+    createTokenColor(
+      "Java primitive types",
+      [
+        "storage.type.primitive.java"
+      ],
+      syntax.type
+    ),
+    createTokenColor(
+      "Java annotations",
+      [
+        "storage.type.annotation.java",
+        "meta.declaration.annotation.java",
+        "entity.name.type.annotation.java"
+      ],
+      syntax.decorator
+    ),
+
+    createTokenColor(
+      "Java constructors",
+      [
+        "entity.name.function.constructor.java",
+        "meta.method.identifier.java"
+      ],
+      syntax.constructor
+    ),
+
+    createTokenColor(
+      "Java constants",
+      [
+        "variable.other.constant.java",
+        "constant.other.java"
+      ],
+      syntax.constant
+    ),
+
+    createTokenColor(
+      "Java primitive types",
+      [
+        "storage.type.primitive.java",
+        "storage.type.java"
+      ],
+      syntax.type
+    ),
+    createTokenColor(
+      "Import and export keywords",
+      [
+        "keyword.control.import",
+        "keyword.control.export",
+        "keyword.control.from",
+        "keyword.control.as"
+      ],
+      syntax.import
+    ),
+
+    createTokenColor(
+      "Module and package paths",
+      [
+        "entity.name.module",
+        "support.module",
+        "string.quoted.module"
+      ],
+      syntax.modulePath
+    ),
+
+    createTokenColor(
+      "Constructors",
+      [
+        "entity.name.function.constructor",
+        "meta.function.constructor",
+        "support.class"
+      ],
+      syntax.constructor
+    ),
+
+    createTokenColor(
+      "Built-in objects",
+      [
+        "support.class",
+        "support.type",
+        "support.variable",
+        "support.constant"
+      ],
+      syntax.builtin
+    ),
+
+    createTokenColor(
+      "Regular expressions",
+      [
+        "string.regexp",
+        "string.regexp.js",
+        "string.regexp.ts"
+      ],
+      syntax.regex
+    ),
+    createTokenColor(
+      "Environment variable keys",
+      [
+        "variable.other.env",
+        "variable.other.assignment.env",
+        "entity.name.variable.env"
+      ],
+      syntax.environmentKey
+    ),
+
+    createTokenColor(
+      "Environment variable values",
+      [
+        "string.unquoted.env",
+        "string.quoted.double.env",
+        "string.quoted.single.env"
+      ],
+      syntax.string
+    ),
+    createTokenColor(
+      "YAML property keys",
+      [
+        "entity.name.tag.yaml",
+        "meta.mapping.key.yaml string.unquoted.plain.out.yaml",
+        "meta.mapping.key.yaml string.unquoted.plain.in.yaml"
+      ],
+      syntax.dataKey
+    ),
+    createTokenColor(
+      "YAML plain values",
+      [
+        "meta.mapping.value.yaml string.unquoted.plain.out.yaml",
+        "meta.mapping.value.yaml string.unquoted.plain.in.yaml",
+        "meta.block.mapping.value.yaml string.unquoted.plain.out.yaml"
+      ],
+      syntax.dataValue
+    ),
+    createTokenColor(
+      "YAML anchors",
+      [
+        "entity.name.type.anchor.yaml",
+        "variable.other.anchor.yaml"
+      ],
+      syntax.yamlAnchor
+    ),
+
+    createTokenColor(
+      "YAML aliases",
+      [
+        "variable.other.alias.yaml"
+      ],
+      syntax.yamlAlias
+    ),
+
+    createTokenColor(
+      "YAML constants",
+      [
+        "constant.language.yaml",
+        "constant.numeric.yaml"
+      ],
+      syntax.constant
+    ),
+    createTokenColor(
+      "JSON property keys",
+      [
+        "support.type.property-name.json"
+      ],
+      syntax.dataKey
+    ),
+    createTokenColor(
+      "JSON string values",
+      [
+        "meta.structure.dictionary.value.json string.quoted.double.json",
+        "meta.structure.array.json string.quoted.double.json"
+      ],
+      syntax.string
+    ),
+    createTokenColor(
+      "JSON constants",
+      [
+        "constant.language.json"
+      ],
+      syntax.constant
+    ),
+
+    createTokenColor(
+      "JSON punctuation",
+      [
+        "punctuation.support.type.property-name.begin.json",
+        "punctuation.support.type.property-name.end.json",
+        "punctuation.separator.dictionary.key-value.json",
+        "punctuation.separator.dictionary.pair.json"
+      ],
+      syntax.punctuation
+    ),
+    createTokenColor(
       "Markdown headings",
       [
         "markup.heading",
@@ -1605,6 +1859,22 @@ function buildCoherenceTheme(tokens) {
     ),
 
     createTokenColor(
+      "Java package paths",
+      [
+        "meta.package.java storage.modifier.package.java"
+      ],
+      syntax.modulePath
+    ),
+
+    createTokenColor(
+      "Java import paths",
+      [
+        "meta.import.java storage.modifier.import.java"
+      ],
+      syntax.modulePath
+    ),
+
+    createTokenColor(
       "Control flow",
       [
         "keyword.control",
@@ -1631,16 +1901,187 @@ function buildCoherenceTheme(tokens) {
     ),
 
     createTokenColor(
-      "Types",
+      "TypeScript declaration keywords",
+      [
+        "storage.type.interface.ts",
+        "storage.type.class.ts",
+        "storage.type.enum.ts",
+        "storage.type.type.ts",
+        "storage.type.namespace.ts",
+        "storage.type.interface.tsx",
+        "storage.type.class.tsx"
+      ],
+      syntax.declaration
+    ),
+
+    createTokenColor(
+      "TypeScript type names",
+      [
+        "entity.name.type.interface.ts",
+        "entity.name.type.class.ts",
+        "entity.name.type.alias.ts",
+        "entity.name.type.enum.ts",
+        "entity.name.type.interface.tsx",
+        "entity.name.type.class.tsx"
+      ],
+      syntax.type
+    ),
+
+    createTokenColor(
+      "Rust declaration keywords",
+      [
+        "storage.type.struct.rust",
+        "storage.type.enum.rust",
+        "storage.type.trait.rust",
+        "storage.type.type.rust",
+        "storage.type.union.rust"
+      ],
+      syntax.declaration
+    ),
+
+    createTokenColor(
+      "Rust types",
+      [
+        "entity.name.type.struct.rust",
+        "entity.name.type.enum.rust",
+        "entity.name.type.trait.rust",
+        "entity.name.type.rust",
+        "support.type.rust",
+        "storage.type.numeric.rust",
+        "storage.type.primitive.rust"
+      ],
+      syntax.type
+    ),
+
+    createTokenColor(
+      "Rust functions",
+      [
+        "entity.name.function.rust",
+        "meta.function.call.rust entity.name.function.rust"
+      ],
+      syntax.function
+    ),
+
+    createTokenColor(
+      "Rust macros",
+      [
+        "entity.name.function.macro.rust",
+        "support.macro.rust",
+        "meta.macro.rust"
+      ],
+      syntax.macro
+    ),
+
+    createTokenColor(
+      "Rust lifetimes",
+      [
+        "entity.name.type.lifetime.rust",
+        "storage.modifier.lifetime.rust",
+        "variable.other.lifetime.rust"
+      ],
+      syntax.lifetime
+    ),
+
+    createTokenColor(
+      "Rust module paths",
+      [
+        "entity.name.namespace.rust",
+        "entity.name.module.rust",
+        "meta.use.rust entity.name.namespace.rust"
+      ],
+      syntax.modulePath
+    ),
+
+    createTokenColor(
+      "Rust constants",
+      [
+        "variable.other.constant.rust",
+        "constant.other.rust"
+      ],
+      syntax.constant
+    ),
+
+    createTokenColor(
+      "C preprocessor directives",
+      [
+        "meta.preprocessor.c",
+        "keyword.control.directive.c",
+        "keyword.control.import.c",
+        "punctuation.definition.directive.c"
+      ],
+      syntax.preprocessor
+    ),
+
+    createTokenColor(
+      "C primitive types",
+      [
+        "storage.type.c",
+        "storage.type.built-in.c",
+        "support.type.c"
+      ],
+      syntax.type
+    ),
+
+    createTokenColor(
+      "C functions",
+      [
+        "entity.name.function.c",
+        "meta.function.c entity.name.function.c"
+      ],
+      syntax.function
+    ),
+
+    createTokenColor(
+      "C constants",
+      [
+        "constant.other.c",
+        "variable.other.constant.c"
+      ],
+      syntax.constant
+    ),
+
+    createTokenColor(
+      "C labels",
+      [
+        "entity.name.label.c"
+      ],
+      syntax.label
+    ),
+
+    createTokenColor(
+      "C header paths",
+      [
+        "string.quoted.other.lt-gt.include.c",
+        "string.quoted.double.include.c"
+      ],
+      syntax.modulePath
+    ),
+
+    createTokenColor(
+      "Named types",
       [
         "entity.name.type",
         "entity.name.class",
         "entity.name.interface",
         "entity.name.struct",
-        "support.type",
-        "storage.type"
+        "entity.name.enum",
+        "support.type"
       ],
       syntax.type
+    ),
+
+    createTokenColor(
+      "Type declaration keywords",
+      [
+        "storage.type.class",
+        "storage.type.interface",
+        "storage.type.struct",
+        "storage.type.enum",
+        "storage.type.trait",
+        "storage.type.union",
+        "storage.type.record"
+      ],
+      syntax.declaration
     ),
 
     createTokenColor(
@@ -1805,6 +2246,111 @@ function buildCoherenceTheme(tokens) {
   ];
 
   const semanticTokenColors = {
+    "class:java": assertColor(
+      syntax.type,
+      "semanticTokenColors.class:java"
+    ),
+    "namespace:java": assertColor(
+      syntax.modulePath,
+      "semanticTokenColors.namespace:java"
+    ),
+
+    "class.defaultLibrary:java": assertColor(
+      syntax.builtin,
+      "semanticTokenColors.class.defaultLibrary:java"
+    ),
+
+    "type.defaultLibrary:java": assertColor(
+      syntax.builtin,
+      "semanticTokenColors.type.defaultLibrary:java"
+    ),
+      "variable.defaultLibrary:python": assertColor(
+      syntax.pythonBuiltin,
+      "semanticTokenColors.variable.defaultLibrary:python"
+    ),
+
+    "function.defaultLibrary:python": assertColor(
+      syntax.pythonBuiltin,
+      "semanticTokenColors.function.defaultLibrary:python"
+    ),
+
+    "method:python": assertColor(
+      syntax.method,
+      "semanticTokenColors.method:python"
+    ),
+    "type.declaration": assertColor(
+      syntax.type,
+      "semanticTokenColors.type.declaration"
+    ),
+
+    "class.declaration": assertColor(
+      syntax.type,
+      "semanticTokenColors.class.declaration"
+    ),
+
+    "interface.declaration": assertColor(
+      syntax.type,
+      "semanticTokenColors.interface.declaration"
+    ),
+
+    "struct.declaration": assertColor(
+      syntax.type,
+      "semanticTokenColors.struct.declaration"
+    ),
+
+    namespace: assertColor(
+      syntax.modulePath,
+      "semanticTokenColors.namespace"
+    ),
+
+    "variable.readonly": assertColor(
+      syntax.constant,
+      "semanticTokenColors.variable.readonly"
+    ),
+
+    label: assertColor(
+      syntax.label,
+      "semanticTokenColors.label"
+    ),
+    keyword: assertColor(
+      syntax.keyword,
+      "semanticTokenColors.keyword"
+    ),
+
+    regexp: assertColor(
+      syntax.regex,
+      "semanticTokenColors.regexp"
+    ),
+
+    "variable.readonly": assertColor(
+      syntax.readonlyVariable,
+      "semanticTokenColors.variable.readonly"
+    ),
+
+    "property.readonly": assertColor(
+      syntax.dataKey,
+      "semanticTokenColors.property.readonly"
+    ),
+
+    "method.static": assertColor(
+      syntax.function,
+      "semanticTokenColors.method.static"
+    ),
+
+    "function.static": assertColor(
+      syntax.function,
+      "semanticTokenColors.function.static"
+    ),
+
+    "class.defaultLibrary": assertColor(
+      syntax.builtin,
+      "semanticTokenColors.class.defaultLibrary"
+    ),
+
+    "type.defaultLibrary": assertColor(
+      syntax.builtin,
+      "semanticTokenColors.type.defaultLibrary"
+    ),
     variable: assertColor(
       syntax.variable,
       "semanticTokenColors.variable"
@@ -1873,11 +2419,6 @@ function buildCoherenceTheme(tokens) {
     typeParameter: assertColor(
       syntax.type,
       "semanticTokenColors.typeParameter"
-    ),
-
-    namespace: assertColor(
-      syntax.namespace,
-      "semanticTokenColors.namespace"
     ),
 
     enum: assertColor(
