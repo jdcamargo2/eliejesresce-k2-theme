@@ -22,13 +22,20 @@ const THEME_OUTPUTS = {
     ROOT_DIR,
     "themes",
     "k2-dim.json"
+  ),
+
+  endurance: path.join(
+    ROOT_DIR,
+    "themes",
+    "k2-endurance.json"
   )
 };
 
 const REQUIRED_VARIANTS = [
   "coherence",
   "vacuum",
-  "dim"
+  "dim",
+  "endurance"
 ];
 
 const REFERENCE_PATTERN = /^\{([a-zA-Z0-9_.-]+)\}$/;
