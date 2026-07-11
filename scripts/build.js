@@ -278,6 +278,34 @@ function readJson(filePath) {
   }
 }
 
+function deepMerge(baseValue, overrideValue) {
+  if (overrideValue === undefined) {
+    return structuredClone(baseValue);
+  }
+
+  if (
+    !isPlainObject(baseValue) ||
+    !isPlainObject(overrideValue)
+  ) {
+    return structuredClone(overrideValue);
+  }
+
+  const result = structuredClone(baseValue);
+
+  for (const [key, value] of Object.entries(
+    overrideValue
+  )) {
+    result[key] = Object.prototype.hasOwnProperty.call(
+      baseValue,
+      key
+    )
+      ? deepMerge(baseValue[key], value)
+      : structuredClone(value);
+  }
+
+  return result;
+}
+
 function getValueByPath(root, referencePath) {
   const segments = referencePath.split(".");
   let current = root;
@@ -530,48 +558,50 @@ function validateResolvedTokens(tokens) {
   validateVariants(tokens);
 }
 
-function validateContrastContracts(tokens) {
+function validateContrastContracts(
+  tokens,
+  variantName
+) {
   const warnings = [];
   const failures = [];
 
-  for (const variantName of REQUIRED_VARIANTS) {
-    const contracts = getContrastContracts(
-      tokens,
-      variantName
+  const contracts = getContrastContracts(
+    tokens,
+    variantName
+  );
+
+  for (const contract of contracts) {
+    assertColor(
+      contract.foreground,
+      `contrast.${contract.name}.foreground`
     );
 
-    for (const contract of contracts) {
-      assertColor(
-        contract.foreground,
-        `contrast.${contract.name}.foreground`
-      );
+    assertColor(
+      contract.background,
+      `contrast.${contract.name}.background`
+    );
 
-      assertColor(
-        contract.background,
-        `contrast.${contract.name}.background`
-      );
+    const ratio = contrastRatio(
+      contract.foreground,
+      contract.background
+    );
 
-      const ratio = contrastRatio(
-        contract.foreground,
-        contract.background
-      );
+    const formattedRatio = ratio.toFixed(2);
 
-      const formattedRatio = ratio.toFixed(2);
+    if (ratio >= contract.minimum) {
+      continue;
+    }
 
-      if (ratio >= contract.minimum) {
-        continue;
-      }
+    const message =
+      `${contract.name}: ${formattedRatio}:1 ` +
+      `(minimum ${contract.minimum}:1) — ` +
+      `${contract.foreground} on ` +
+      `${contract.background}`;
 
-      const message =
-        `${contract.name}: ${formattedRatio}:1 ` +
-        `(minimum ${contract.minimum}:1) — ` +
-        `${contract.foreground} on ${contract.background}`;
-
-      if (contract.severity === "error") {
-        failures.push(message);
-      } else {
-        warnings.push(message);
-      }
+    if (contract.severity === "error") {
+      failures.push(message);
+    } else {
+      warnings.push(message);
     }
   }
 
@@ -639,6 +669,46 @@ function resolveValue(value, root, resolutionStack = []) {
 
 function resolveTokens(tokens) {
   return resolveValue(tokens, tokens);
+}
+
+function createVariantTokenTree(
+  rawTokens,
+  variantName
+) {
+  const variant =
+    rawTokens.variants?.[variantName];
+
+  if (!variant) {
+    throw new Error(
+      `Cannot resolve unknown variant: ${variantName}`
+    );
+  }
+
+  const variantTokens = structuredClone(rawTokens);
+
+  variantTokens.semantic = deepMerge(
+    rawTokens.semantic,
+    variant.semanticOverrides ?? {}
+  );
+
+  variantTokens.components = deepMerge(
+    rawTokens.components,
+    variant.componentOverrides ?? {}
+  );
+
+  return resolveTokens(variantTokens);
+}
+
+function resolveVariantTokenTrees(rawTokens) {
+  return Object.fromEntries(
+    REQUIRED_VARIANTS.map((variantName) => [
+      variantName,
+      createVariantTokenTree(
+        rawTokens,
+        variantName
+      )
+    ])
+  );
 }
 
 function assertColor(value, label) {
@@ -2896,14 +2966,17 @@ function buildTheme(tokens, variantName) {
   };
 }
 
-function buildAllThemes(tokens) {
+function buildAllThemes(
+  resolvedVariantTokens
+) {
   return Object.fromEntries(
-    REQUIRED_VARIANTS.map(
-      (currentVariantName) => [
-        currentVariantName,
-        buildTheme(tokens, currentVariantName)
-      ]
-    )
+    REQUIRED_VARIANTS.map((variantName) => [
+      variantName,
+      buildTheme(
+        resolvedVariantTokens[variantName],
+        variantName
+      )
+    ])
   );
 }
 
@@ -2911,11 +2984,18 @@ function serializeJson(value) {
   return `${JSON.stringify(value, null, 2)}\n`;
 }
 
-function printContrastReport(tokens) {
+function printContrastReport(
+  resolvedVariantTokens
+) {
   console.log("K2 contrast report:");
 
   for (const variantName of REQUIRED_VARIANTS) {
-    const variant = tokens.variants[variantName];
+    const tokens =
+      resolvedVariantTokens[variantName];
+
+    const variant =
+      tokens.variants[variantName];
+
     const contracts = getContrastContracts(
       tokens,
       variantName
@@ -2968,13 +3048,25 @@ function run() {
 
   validateRawTokens(rawTokens);
 
-  const resolvedTokens = resolveTokens(rawTokens);
+  const resolvedVariantTokens =
+    resolveVariantTokenTrees(rawTokens);
 
-  validateResolvedTokens(resolvedTokens);
-  validateContrastContracts(resolvedTokens);
+  for (const variantName of REQUIRED_VARIANTS) {
+    const variantTokens =
+      resolvedVariantTokens[variantName];
+
+    validateResolvedTokens(variantTokens);
+
+    validateContrastContracts(
+      variantTokens,
+      variantName
+    );
+  }
 
   if (reportContrast) {
-    printContrastReport(resolvedTokens);
+    printContrastReport(
+      resolvedVariantTokens
+    );
   }
 
   /*
@@ -2988,7 +3080,7 @@ function run() {
   }
 
   const generatedThemes = buildAllThemes(
-    resolvedTokens
+    resolvedVariantTokens
   );
 
   const generatedSources = Object.fromEntries(
