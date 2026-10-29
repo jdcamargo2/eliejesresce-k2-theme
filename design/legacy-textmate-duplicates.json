@@ -1,0 +1,778 @@
+{
+  "coherence": {
+    "support.type.primitive.ts": [
+      {
+        "index": 0,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#68B8C3"
+        }
+      },
+      {
+        "index": 5,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#89CDD5"
+        }
+      }
+    ],
+    "support.type.primitive.tsx": [
+      {
+        "index": 0,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#68B8C3"
+        }
+      },
+      {
+        "index": 5,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#89CDD5"
+        }
+      }
+    ],
+    "storage.type.interface.ts": [
+      {
+        "index": 2,
+        "name": "TypeScript interface declaration keyword",
+        "settings": {
+          "foreground": "#7698EE"
+        }
+      },
+      {
+        "index": 55,
+        "name": "TypeScript declaration keywords",
+        "settings": {
+          "foreground": "#91AFF4"
+        }
+      }
+    ],
+    "storage.type.interface.tsx": [
+      {
+        "index": 2,
+        "name": "TypeScript interface declaration keyword",
+        "settings": {
+          "foreground": "#7698EE"
+        }
+      },
+      {
+        "index": 55,
+        "name": "TypeScript declaration keywords",
+        "settings": {
+          "foreground": "#91AFF4"
+        }
+      }
+    ],
+    "entity.name.type.interface.ts": [
+      {
+        "index": 3,
+        "name": "TypeScript interface declaration name",
+        "settings": {
+          "foreground": "#BAA7E2"
+        }
+      },
+      {
+        "index": 56,
+        "name": "TypeScript type names",
+        "settings": {
+          "foreground": "#89CDD5"
+        }
+      }
+    ],
+    "entity.name.type.interface.tsx": [
+      {
+        "index": 3,
+        "name": "TypeScript interface declaration name",
+        "settings": {
+          "foreground": "#BAA7E2"
+        }
+      },
+      {
+        "index": 56,
+        "name": "TypeScript type names",
+        "settings": {
+          "foreground": "#89CDD5"
+        }
+      }
+    ],
+    "storage.type.primitive.java": [
+      {
+        "index": 13,
+        "name": "Java primitive types",
+        "settings": {
+          "foreground": "#89CDD5"
+        }
+      },
+      {
+        "index": 17,
+        "name": "Java primitive types",
+        "settings": {
+          "foreground": "#89CDD5"
+        }
+      }
+    ],
+    "keyword.control.import": [
+      {
+        "index": 18,
+        "name": "Import and export keywords",
+        "settings": {
+          "foreground": "#7698EE"
+        }
+      },
+      {
+        "index": 53,
+        "name": "Control flow",
+        "settings": {
+          "foreground": "#91AFF4"
+        }
+      }
+    ],
+    "entity.name.module": [
+      {
+        "index": 19,
+        "name": "Module and package paths",
+        "settings": {
+          "foreground": "#A6ADB6"
+        }
+      },
+      {
+        "index": 72,
+        "name": "Namespaces",
+        "settings": {
+          "foreground": "#68B8C3"
+        }
+      }
+    ],
+    "support.module": [
+      {
+        "index": 19,
+        "name": "Module and package paths",
+        "settings": {
+          "foreground": "#A6ADB6"
+        }
+      },
+      {
+        "index": 72,
+        "name": "Namespaces",
+        "settings": {
+          "foreground": "#68B8C3"
+        }
+      }
+    ],
+    "support.class": [
+      {
+        "index": 20,
+        "name": "Constructors",
+        "settings": {
+          "foreground": "#BAA7E2"
+        }
+      },
+      {
+        "index": 21,
+        "name": "Built-in objects",
+        "settings": {
+          "foreground": "#68B8C3"
+        }
+      }
+    ],
+    "support.type": [
+      {
+        "index": 21,
+        "name": "Built-in objects",
+        "settings": {
+          "foreground": "#68B8C3"
+        }
+      },
+      {
+        "index": 70,
+        "name": "Named types",
+        "settings": {
+          "foreground": "#89CDD5"
+        }
+      }
+    ]
+  },
+  "vacuum": {
+    "support.type.primitive.ts": [
+      {
+        "index": 0,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#58C7D8"
+        }
+      },
+      {
+        "index": 5,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#89CDD5"
+        }
+      }
+    ],
+    "support.type.primitive.tsx": [
+      {
+        "index": 0,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#58C7D8"
+        }
+      },
+      {
+        "index": 5,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#89CDD5"
+        }
+      }
+    ],
+    "storage.type.interface.ts": [
+      {
+        "index": 2,
+        "name": "TypeScript interface declaration keyword",
+        "settings": {
+          "foreground": "#5F8DFF"
+        }
+      },
+      {
+        "index": 55,
+        "name": "TypeScript declaration keywords",
+        "settings": {
+          "foreground": "#91AFFF"
+        }
+      }
+    ],
+    "storage.type.interface.tsx": [
+      {
+        "index": 2,
+        "name": "TypeScript interface declaration keyword",
+        "settings": {
+          "foreground": "#5F8DFF"
+        }
+      },
+      {
+        "index": 55,
+        "name": "TypeScript declaration keywords",
+        "settings": {
+          "foreground": "#91AFFF"
+        }
+      }
+    ],
+    "entity.name.type.interface.ts": [
+      {
+        "index": 3,
+        "name": "TypeScript interface declaration name",
+        "settings": {
+          "foreground": "#BAA7E2"
+        }
+      },
+      {
+        "index": 56,
+        "name": "TypeScript type names",
+        "settings": {
+          "foreground": "#89CDD5"
+        }
+      }
+    ],
+    "entity.name.type.interface.tsx": [
+      {
+        "index": 3,
+        "name": "TypeScript interface declaration name",
+        "settings": {
+          "foreground": "#BAA7E2"
+        }
+      },
+      {
+        "index": 56,
+        "name": "TypeScript type names",
+        "settings": {
+          "foreground": "#89CDD5"
+        }
+      }
+    ],
+    "storage.type.primitive.java": [
+      {
+        "index": 13,
+        "name": "Java primitive types",
+        "settings": {
+          "foreground": "#89CDD5"
+        }
+      },
+      {
+        "index": 17,
+        "name": "Java primitive types",
+        "settings": {
+          "foreground": "#89CDD5"
+        }
+      }
+    ],
+    "keyword.control.import": [
+      {
+        "index": 18,
+        "name": "Import and export keywords",
+        "settings": {
+          "foreground": "#5F8DFF"
+        }
+      },
+      {
+        "index": 53,
+        "name": "Control flow",
+        "settings": {
+          "foreground": "#91AFFF"
+        }
+      }
+    ],
+    "entity.name.module": [
+      {
+        "index": 19,
+        "name": "Module and package paths",
+        "settings": {
+          "foreground": "#A4B2C2"
+        }
+      },
+      {
+        "index": 72,
+        "name": "Namespaces",
+        "settings": {
+          "foreground": "#58C7D8"
+        }
+      }
+    ],
+    "support.module": [
+      {
+        "index": 19,
+        "name": "Module and package paths",
+        "settings": {
+          "foreground": "#A4B2C2"
+        }
+      },
+      {
+        "index": 72,
+        "name": "Namespaces",
+        "settings": {
+          "foreground": "#58C7D8"
+        }
+      }
+    ],
+    "support.class": [
+      {
+        "index": 20,
+        "name": "Constructors",
+        "settings": {
+          "foreground": "#BAA7E2"
+        }
+      },
+      {
+        "index": 21,
+        "name": "Built-in objects",
+        "settings": {
+          "foreground": "#58C7D8"
+        }
+      }
+    ],
+    "support.type": [
+      {
+        "index": 21,
+        "name": "Built-in objects",
+        "settings": {
+          "foreground": "#58C7D8"
+        }
+      },
+      {
+        "index": 70,
+        "name": "Named types",
+        "settings": {
+          "foreground": "#89CDD5"
+        }
+      }
+    ]
+  },
+  "dim": {
+    "support.type.primitive.ts": [
+      {
+        "index": 0,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#91F3EE"
+        }
+      },
+      {
+        "index": 5,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#91F3EE"
+        }
+      }
+    ],
+    "support.type.primitive.tsx": [
+      {
+        "index": 0,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#91F3EE"
+        }
+      },
+      {
+        "index": 5,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#91F3EE"
+        }
+      }
+    ],
+    "storage.type.interface.ts": [
+      {
+        "index": 2,
+        "name": "TypeScript interface declaration keyword",
+        "settings": {
+          "foreground": "#FF8FB8"
+        }
+      },
+      {
+        "index": 55,
+        "name": "TypeScript declaration keywords",
+        "settings": {
+          "foreground": "#FF928A"
+        }
+      }
+    ],
+    "storage.type.interface.tsx": [
+      {
+        "index": 2,
+        "name": "TypeScript interface declaration keyword",
+        "settings": {
+          "foreground": "#FF8FB8"
+        }
+      },
+      {
+        "index": 55,
+        "name": "TypeScript declaration keywords",
+        "settings": {
+          "foreground": "#FF928A"
+        }
+      }
+    ],
+    "entity.name.type.interface.ts": [
+      {
+        "index": 3,
+        "name": "TypeScript interface declaration name",
+        "settings": {
+          "foreground": "#DEB4FF"
+        }
+      },
+      {
+        "index": 56,
+        "name": "TypeScript type names",
+        "settings": {
+          "foreground": "#91F3EE"
+        }
+      }
+    ],
+    "entity.name.type.interface.tsx": [
+      {
+        "index": 3,
+        "name": "TypeScript interface declaration name",
+        "settings": {
+          "foreground": "#DEB4FF"
+        }
+      },
+      {
+        "index": 56,
+        "name": "TypeScript type names",
+        "settings": {
+          "foreground": "#91F3EE"
+        }
+      }
+    ],
+    "storage.type.primitive.java": [
+      {
+        "index": 13,
+        "name": "Java primitive types",
+        "settings": {
+          "foreground": "#91F3EE"
+        }
+      },
+      {
+        "index": 17,
+        "name": "Java primitive types",
+        "settings": {
+          "foreground": "#91F3EE"
+        }
+      }
+    ],
+    "keyword.control.import": [
+      {
+        "index": 18,
+        "name": "Import and export keywords",
+        "settings": {
+          "foreground": "#FF8FB8"
+        }
+      },
+      {
+        "index": 53,
+        "name": "Control flow",
+        "settings": {
+          "foreground": "#FF928A"
+        }
+      }
+    ],
+    "entity.name.module": [
+      {
+        "index": 19,
+        "name": "Module and package paths",
+        "settings": {
+          "foreground": "#8583A6"
+        }
+      },
+      {
+        "index": 72,
+        "name": "Namespaces",
+        "settings": {
+          "foreground": "#80B7FF"
+        }
+      }
+    ],
+    "support.module": [
+      {
+        "index": 19,
+        "name": "Module and package paths",
+        "settings": {
+          "foreground": "#8583A6"
+        }
+      },
+      {
+        "index": 72,
+        "name": "Namespaces",
+        "settings": {
+          "foreground": "#80B7FF"
+        }
+      }
+    ],
+    "support.class": [
+      {
+        "index": 20,
+        "name": "Constructors",
+        "settings": {
+          "foreground": "#DEB4FF"
+        }
+      },
+      {
+        "index": 21,
+        "name": "Built-in objects",
+        "settings": {
+          "foreground": "#63E6E2"
+        }
+      }
+    ],
+    "support.type": [
+      {
+        "index": 21,
+        "name": "Built-in objects",
+        "settings": {
+          "foreground": "#63E6E2"
+        }
+      },
+      {
+        "index": 70,
+        "name": "Named types",
+        "settings": {
+          "foreground": "#91F3EE"
+        }
+      }
+    ]
+  },
+  "endurance": {
+    "support.type.primitive.ts": [
+      {
+        "index": 0,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#58D3E0"
+        }
+      },
+      {
+        "index": 5,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#84EAF3"
+        }
+      }
+    ],
+    "support.type.primitive.tsx": [
+      {
+        "index": 0,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#58D3E0"
+        }
+      },
+      {
+        "index": 5,
+        "name": "TypeScript primitive types",
+        "settings": {
+          "foreground": "#84EAF3"
+        }
+      }
+    ],
+    "storage.type.interface.ts": [
+      {
+        "index": 2,
+        "name": "TypeScript interface declaration keyword",
+        "settings": {
+          "foreground": "#72A7FF"
+        }
+      },
+      {
+        "index": 55,
+        "name": "TypeScript declaration keywords",
+        "settings": {
+          "foreground": "#9BC2FF"
+        }
+      }
+    ],
+    "storage.type.interface.tsx": [
+      {
+        "index": 2,
+        "name": "TypeScript interface declaration keyword",
+        "settings": {
+          "foreground": "#72A7FF"
+        }
+      },
+      {
+        "index": 55,
+        "name": "TypeScript declaration keywords",
+        "settings": {
+          "foreground": "#9BC2FF"
+        }
+      }
+    ],
+    "entity.name.type.interface.ts": [
+      {
+        "index": 3,
+        "name": "TypeScript interface declaration name",
+        "settings": {
+          "foreground": "#D0A6FF"
+        }
+      },
+      {
+        "index": 56,
+        "name": "TypeScript type names",
+        "settings": {
+          "foreground": "#84EAF3"
+        }
+      }
+    ],
+    "entity.name.type.interface.tsx": [
+      {
+        "index": 3,
+        "name": "TypeScript interface declaration name",
+        "settings": {
+          "foreground": "#D0A6FF"
+        }
+      },
+      {
+        "index": 56,
+        "name": "TypeScript type names",
+        "settings": {
+          "foreground": "#84EAF3"
+        }
+      }
+    ],
+    "storage.type.primitive.java": [
+      {
+        "index": 13,
+        "name": "Java primitive types",
+        "settings": {
+          "foreground": "#84EAF3"
+        }
+      },
+      {
+        "index": 17,
+        "name": "Java primitive types",
+        "settings": {
+          "foreground": "#84EAF3"
+        }
+      }
+    ],
+    "keyword.control.import": [
+      {
+        "index": 18,
+        "name": "Import and export keywords",
+        "settings": {
+          "foreground": "#72A7FF"
+        }
+      },
+      {
+        "index": 53,
+        "name": "Control flow",
+        "settings": {
+          "foreground": "#9BC2FF"
+        }
+      }
+    ],
+    "entity.name.module": [
+      {
+        "index": 19,
+        "name": "Module and package paths",
+        "settings": {
+          "foreground": "#A9B7C6"
+        }
+      },
+      {
+        "index": 72,
+        "name": "Namespaces",
+        "settings": {
+          "foreground": "#58D3E0"
+        }
+      }
+    ],
+    "support.module": [
+      {
+        "index": 19,
+        "name": "Module and package paths",
+        "settings": {
+          "foreground": "#A9B7C6"
+        }
+      },
+      {
+        "index": 72,
+        "name": "Namespaces",
+        "settings": {
+          "foreground": "#58D3E0"
+        }
+      }
+    ],
+    "support.class": [
+      {
+        "index": 20,
+        "name": "Constructors",
+        "settings": {
+          "foreground": "#D0A6FF"
+        }
+      },
+      {
+        "index": 21,
+        "name": "Built-in objects",
+        "settings": {
+          "foreground": "#58D3E0"
+        }
+      }
+    ],
+    "support.type": [
+      {
+        "index": 21,
+        "name": "Built-in objects",
+        "settings": {
+          "foreground": "#58D3E0"
+        }
+      },
+      {
+        "index": 70,
+        "name": "Named types",
+        "settings": {
+          "foreground": "#84EAF3"
+        }
+      }
+    ]
+  }
+}

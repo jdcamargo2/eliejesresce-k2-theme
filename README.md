@@ -1,150 +1,45 @@
 # Eliejesresce K2 Themes
 
-A family of dark Visual Studio Code themes designed around semantic clarity,
-controlled contrast, and long coding sessions.
+A collection of five dark themes and one light theme for Visual Studio Code, designed around semantic color roles and controlled contrast.
 
-The collection contains four distinct interpretations of the same K2 visual
-language.
+## Variants
 
-## Themes
+- **Coherence**: a balanced dark theme.
+- **Vacuum**: near-black dark surfaces.
+- **Dim**: an indigo-plum editor background.
+- **Endurance**: dark surfaces with stronger contrast.
+- **Ferro**: the shared dark syntax palette on a `#131416` editor background.
+- **Ash**: a light gray theme with a `#D4D9DE` editor background and an adapted palette for the same syntax roles.
 
-### K2 Coherence
+The five dark variants share Ferro's syntax colors while retaining their distinct backgrounds and surfaces. Ash adapts those roles to a light background. Existing screenshots show an earlier palette and are not representative of this version.
 
-Balanced, technical, and restrained. The default expression of the K2 palette.
+## Requirements and installation
 
-![K2 Coherence](images/k2-coherence.png)
-
-### K2 Vacuum
-
-A deeper and quieter variation built around near-black surfaces and cool accents.
-
-![K2 Vacuum](images/k2-vacuum.png)
-
-### K2 Dim
-
-The expressive member of the family: intense pastel colors over an indigo-plum
-background.
-
-![K2 Dim](images/k2-dim.png)
-
-### K2 Endurance
-
-A high-contrast dark theme designed for clear navigation during long development
-sessions.
-
-![K2 Endurance](images/k2-endurance.png)
-
-## Design language
-
-K2 uses semantic color roles rather than assigning arbitrary colors to individual
-languages:
-
-- **Blue** represents direction and control.
-- **Cyan** represents structure and types.
-- **Violet** represents transformation and behavior.
-- **Green** represents valid data.
-- **Amber** represents attention and constants.
-- **Coral** represents errors and rupture.
-- **Neutral tones** carry ordinary variables and contextual information.
-
-Each theme reinterprets these roles while preserving a consistent reading model.
-
-## Language coverage
-
-The themes include dedicated coverage for:
-
-- Python and Qiskit
-- TypeScript and JavaScript
-- Java
-- Rust
-- C
-- HTML and Django templates
-- CSS
-- JSON
-- YAML
-- Markdown
-- Terminal ANSI colors
-- Diagnostics, diffs, debugging, testing and notebooks
-
-## Installation
-
-### Visual Studio Code Marketplace
-
-1. Open **Extensions** in Visual Studio Code.
-2. Search for `Eliejesresce K2 Themes`.
-3. Install the extension.
-4. Open `Preferences: Color Theme`.
-5. Select one of the K2 themes.
-
-### Local VSIX
+Visual Studio Code 1.90 or newer is required. To install a locally packaged extension:
 
 ```bash
 code --install-extension eliejesresce-k2-theme-3.0.0.vsix
 ```
 
-## Development
+Then choose a variant using **Preferences: Color Theme**.
 
-Install dependencies:
+## Development and tests
 
-```bash
-npm install
-```
-
-Validate the token architecture:
+Node.js 22 or newer is required for development. From a source checkout:
 
 ```bash
-npm run validate
-```
-
-Generate all themes:
-
-```bash
-npm run build
-```
-
-Check that generated files are synchronized:
-
-```bash
-npm run check:themes
-```
-
-Run the complete test suite:
-
-```bash
-npm test
-```
-
-Generate a contrast report:
-
-```bash
+npm ci
+npm run build             # Generate themes from design tokens
+npm test                  # Tests, validation, synchronization and diff report
 npm run report:contrast
+npm run report:diff
+npx @vscode/vsce package --no-dependencies
 ```
 
-Package the extension:
+## Known limitations
 
-```bash
-npx @vscode/vsce package
-```
-
-## Architecture
-
-The generated themes are built from:
-
-```text
-Primitive palette
-        ↓
-Semantic roles
-        ↓
-Shared components
-        ↓
-Variant overrides
-        ↓
-VS Code theme files
-```
-
-Raw colors are restricted to the primitive palette. The build validates token
-references, required surfaces, deterministic output, and contrast contracts.
+Syntax and semantic highlighting depend on the grammar and language provider in use. Semantic coverage has not been verified for every language, provider or token. Manual visual verification of the current six themes, including editor tokens and workbench surfaces, remains pending. Automated contrast checks cover the specified contracts, not every possible color combination.
 
 ## License
 
-MIT © 2026 Juan Diego Guerrero Camargo
+MIT © 2026 Juan Diego Guerrero Camargo. See [LICENSE](LICENSE).

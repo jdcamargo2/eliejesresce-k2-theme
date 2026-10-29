@@ -34,3 +34,14 @@ class QuantumStateService:
         circuit = QuantumCircuit(1)
         circuit.ry(angle, 0)
         return circuit
+class Inspection:
+    """Documentation for inspecting this class."""
+    text = """Multiline data, not documentation."""
+
+    @classmethod
+    def make(cls, value: int):
+        return cls(value)
+
+    def method(self, value: int):
+        ordinary = value
+        return len(str(ordinary))

@@ -1,4 +1,3 @@
-cat > .vscodeignore <<'EOF'
 .git/**
 .github/**
 .vscode/**
@@ -18,4 +17,7 @@ coverage/**
 *.log
 
 screenshots-local/**
-EOF
+
+# Development-only assets
+.nvmrc
+images/**

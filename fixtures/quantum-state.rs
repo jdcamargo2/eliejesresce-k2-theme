@@ -15,3 +15,6 @@ impl<'a> QuantumState<'a> {
         self.amplitudes.len()
     }
 }
+fn inspect(value: Option<i32>) -> Option<i32> {
+    match value { Some(n) => Some(n + 1), None => None }
+}
