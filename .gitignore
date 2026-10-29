@@ -1,4 +1,3 @@
-cat > .gitignore <<'EOF'
 # Dependencies
 node_modules/
 
@@ -50,4 +49,3 @@ __pycache__/
 
 # Local screenshots or scratch files
 screenshots-local/
-EOF

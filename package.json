@@ -1,31 +1,26 @@
 {
   "name": "eliejesresce-k2-theme",
   "displayName": "Eliejesresce K2 Themes",
-  "description": "A family of four dark VS Code themes designed for clarity, contrast, and long coding sessions.",
+  "description": "A family of five dark and one light VS Code themes designed for clarity, contrast, and long coding sessions.",
   "version": "3.0.0",
   "publisher": "archimango",
   "license": "MIT",
   "icon": "icon.png",
-
   "repository": {
     "type": "git",
     "url": "https://github.com/jdcamargo2/eliejesresce-k2-theme.git"
   },
-
   "homepage": "https://github.com/jdcamargo2/eliejesresce-k2-theme#readme",
-
   "bugs": {
     "url": "https://github.com/jdcamargo2/eliejesresce-k2-theme/issues"
   },
-
   "engines": {
-    "vscode": "^1.90.0"
+    "vscode": "^1.90.0",
+    "node": ">=22"
   },
-
   "categories": [
     "Themes"
   ],
-
   "keywords": [
     "theme",
     "dark theme",
@@ -40,29 +35,40 @@
     "validate": "node scripts/build.js --validate",
     "check:themes": "node scripts/build.js --check",
     "report:contrast": "node scripts/build.js --validate --report-contrast",
-    "test": "npm run validate && npm run check:themes"
+    "test": "node --test tests/*.test.js && npm run validate && npm run check:themes && npm run report:diff",
+    "report:diff": "node scripts/report-diff.js"
   },
   "contributes": {
     "themes": [
       {
-        "label": "K2 Coherence",
+        "label": "Coherence",
         "uiTheme": "vs-dark",
         "path": "./themes/k2-coherence.json"
       },
       {
-        "label": "K2 Vacuum",
+        "label": "Vacuum",
         "uiTheme": "vs-dark",
         "path": "./themes/k2-vacuum.json"
       },
       {
-        "label": "K2 Dim",
+        "label": "Dim",
         "uiTheme": "vs-dark",
         "path": "./themes/k2-dim.json"
       },
       {
-        "label": "K2 Endurance",
+        "label": "Endurance",
         "uiTheme": "vs-dark",
         "path": "./themes/k2-endurance.json"
+      },
+      {
+        "label": "Ferro",
+        "uiTheme": "vs-dark",
+        "path": "./themes/k2-ferro.json"
+      },
+      {
+        "label": "Ash",
+        "uiTheme": "vs",
+        "path": "./themes/k2-ash.json"
       }
     ]
   },

@@ -24,18 +24,18 @@ const THEME_OUTPUTS = {
     "k2-dim.json"
   ),
 
-  endurance: path.join(
-    ROOT_DIR,
-    "themes",
-    "k2-endurance.json"
-  )
+  endurance: path.join(ROOT_DIR, "themes", "k2-endurance.json"),
+  ferro: path.join(ROOT_DIR, "themes", "k2-ferro.json"),
+  ash: path.join(ROOT_DIR, "themes", "k2-ash.json")
 };
 
 const REQUIRED_VARIANTS = [
   "coherence",
   "vacuum",
   "dim",
-  "endurance"
+  "endurance",
+  "ferro",
+  "ash"
 ];
 
 const REFERENCE_PATTERN = /^\{([a-zA-Z0-9_.-]+)\}$/;
@@ -254,7 +254,7 @@ function getContrastContracts(tokens, variantName) {
   const surface =
     tokens.variants[variantName].surface;
 
-  return CONTRAST_CONTRACT_TEMPLATES.map(
+  const contracts = CONTRAST_CONTRACT_TEMPLATES.map(
     (template) => {
       const foreground = template.foreground
         ? getValueByPath(tokens, template.foreground)
@@ -269,6 +269,10 @@ function getContrastContracts(tokens, variantName) {
       };
     }
   );
+  for (const [name, foreground] of Object.entries(tokens.palette).filter(([name]) => name.startsWith("ferro") && name !== "ferroBackground")) {
+    contracts.push({ name: `${tokens.variants[variantName].name} — ${name.replace(/^ferro/, variantName === "ash" ? "ash" : "ferro")}`, foreground, background: surface.editor, minimum: 4.5, severity: "error" });
+  }
+  return contracts;
 }
 
 function fail(message) {
@@ -579,10 +583,7 @@ function validateContrastContracts(
   const warnings = [];
   const failures = [];
 
-  const contracts = getContrastContracts(
-    tokens,
-    variantName
-  );
+  const contracts = getContrastContracts(tokens, variantName);
 
   for (const contract of contracts) {
     assertColor(
@@ -699,6 +700,8 @@ function createVariantTokenTree(
   }
 
   const variantTokens = structuredClone(rawTokens);
+
+  variantTokens.palette = deepMerge(rawTokens.palette, variant.paletteOverrides ?? {});
 
   variantTokens.semantic = deepMerge(
     rawTokens.semantic,
@@ -866,7 +869,55 @@ function createTokenColor(name, scope, foreground, fontStyle) {
   };
 }
 
-function buildTheme(tokens, variantName) {
+function semanticRulesFromEntries(entries) {
+  const result = {};
+  for (const [selector, value] of entries) {
+    if (Object.prototype.hasOwnProperty.call(result, selector)) {
+      throw new Error(`Duplicate semantic selector: ${selector}`);
+    }
+    result[selector] = value;
+  }
+  return result;
+}
+
+function buildTextMateRules(tokens) {
+  const p = tokens.palette;
+  const rules = [
+    ["Keywords", ["keyword", "storage.type.function", "storage.type.class", "storage.type.interface", "storage.type.struct", "storage.type.enum", "storage.type.trait", "storage.type.union", "storage.type.record"], p.ferroKeyword],
+    ["Modifiers", ["storage.modifier"], p.ferroModifier],
+    ["Imports", ["keyword.control.import", "keyword.control.export", "keyword.control.from", "keyword.control.as", "keyword.other.package.java", "keyword.control.import.java", "keyword.control.directive.include.c", "keyword.control.directive.include.cpp", "meta.preprocessor.include.cpp punctuation.definition.directive.cpp", "string.quoted.other.lt-gt.include.c", "string.quoted.double.include.c"], p.ferroImport],
+    ["Preprocessor directives", ["keyword.control.directive.c", "keyword.control.directive.define.c", "keyword.control.directive.define.cpp", "punctuation.definition.directive.c"], p.ferroPreprocessor],
+    ["Types", ["entity.name.type", "entity.name.class", "entity.name.interface", "entity.name.struct", "entity.name.enum", "support.type", "support.class", "storage.type.primitive.java", "storage.type.built-in.c", "storage.type.built-in.primitive.c", "storage.type.built-in.primitive.cpp", "storage.type.numeric.rust", "storage.type.primitive.rust", "support.type.primitive.ts", "support.type.primitive.tsx", "support.type.builtin.ts", "support.type.builtin.tsx", "support.type.exception.python", "entity.name.type.exception.python"], p.ferroType],
+    ["Functions", ["entity.name.function", "support.function", "variable.function", "entity.name.function.magic.python", "entity.name.function.constructor.java"], p.ferroFunction],
+    ["Macros and enum members", ["entity.name.function.macro.rust", "support.macro.rust", "entity.name.constant", "variable.other.enummember", "entity.name.function.preprocessor"], p.ferroMacro],
+    ["Variables and properties", ["variable", "variable.other.constant", "support.variable", "support.type.property-name", "variable.other.property", "meta.object-literal.key", "entity.name.tag.yaml", "meta.mapping.key.yaml string.unquoted.plain.out.yaml", "meta.mapping.key.yaml string.unquoted.plain.in.yaml", "entity.other.attribute-name"], p.ferroVariable],
+    ["Parameters and receivers", ["variable.parameter", "variable.language.special.self.python", "variable.parameter.function.language.special.self.python", "variable.parameter.function.language.special.cls.python", "variable.language.this"], p.ferroParameter],
+    ["Strings and regex", ["string", "string.regexp", "meta.mapping.value.yaml string.unquoted.plain.out.yaml", "meta.mapping.value.yaml string.unquoted.plain.in.yaml"], p.ferroString],
+    ["Numbers and booleans", ["constant.numeric", "constant.language.boolean"], p.ferroNumber],
+    ["Absence", ["constant.language.null", "constant.language.nullptr"], p.ferroNull],
+    ["Decorators", ["entity.name.function.decorator.python", "storage.type.annotation", "entity.name.type.annotation.java"], p.ferroDecorator],
+    ["Operators and punctuation", ["keyword.operator", "punctuation.separator", "punctuation.terminator", "punctuation.accessor", "punctuation.definition.parameters", "punctuation.definition.typeparameters", "punctuation.definition.tag"], p.ferroOperator],
+    ["Comments and documentation", ["string.quoted.docstring.multi.python", "string.quoted.docstring.single.python", "comment", "punctuation.definition.comment", "comment.block.documentation", "comment.line.documentation"], p.ferroComment],
+    ["Tags", ["entity.name.tag"], p.ferroType]
+  ];
+  return rules.map(([name, scopes, color]) => createTokenColor(name, scopes, color));
+}
+
+function buildSemanticRules(tokens) {
+  const p = tokens.palette;
+  return semanticRulesFromEntries([
+    ...["variable", "variable.readonly", "variable.defaultLibrary", "property", "property.readonly"].map(s => [s, p.ferroVariable]),
+    ...["parameter"].map(s => [s, p.ferroParameter]),
+    ...["class", "interface", "struct", "type", "typeParameter", "enum"].map(s => [s, p.ferroType]),
+    ...["function", "method"].map(s => [s, p.ferroFunction]),
+    ...["macro", "enumMember"].map(s => [s, p.ferroMacro]),
+    ["decorator", p.ferroDecorator], ["keyword", p.ferroKeyword],
+    ["regexp", p.ferroString], ["string", p.ferroString], ["number", p.ferroNumber],
+    ["comment", p.ferroComment], ["operator", p.ferroOperator], ["namespace", p.ferroVariable]
+  ]);
+}
+
+function buildTheme(tokens, variantName, policy = {}) {
   const variant = tokens.variants[variantName];
   const syntax = tokens.components.syntax;
   const brackets = tokens.components.brackets;
@@ -1971,1062 +2022,14 @@ function buildTheme(tokens, variantName) {
     )
   };
 
-  const tokenColors = [
-    createTokenColor(
-      "TypeScript primitive types",
-      [
-        "support.type.primitive.ts",
-        "support.type.primitive.tsx"
-      ],
-      syntax.primitiveType
-    ),
-    createTokenColor(
-      "Python self and cls",
-      [
-        "variable.language.special.self.python",
-        "variable.parameter.function.language.special.self.python",
-        "variable.parameter.function.language.special.cls.python"
-      ],
-      syntax.selfReference
-    ),
-
-    createTokenColor(
-      "TypeScript interface declaration keyword",
-      [
-        "storage.type.interface.ts",
-        "storage.type.interface.tsx"
-      ],
-      syntax.keyword
-    ),
-
-    createTokenColor(
-      "TypeScript interface declaration name",
-      [
-        "entity.name.type.interface.ts",
-        "entity.name.type.interface.tsx"
-      ],
-      syntax.function
-    ),
-
-    createTokenColor(
-      "TypeScript utility types",
-      [
-        "support.type.builtin.ts",
-        "support.type.builtin.tsx",
-        "support.type.object.module.ts",
-        "support.type.object.module.tsx"
-      ],
-      syntax.modulePath
-    ),
-
-    createTokenColor(
-      "TypeScript primitive types",
-      [
-        "support.type.primitive.ts",
-        "support.type.primitive.tsx",
-        "storage.type.ts",
-        "storage.type.tsx"
-      ],
-      syntax.type
-    ),
-
-    createTokenColor(
-      "TypeScript properties",
-      [
-        "variable.other.property.ts",
-        "variable.other.property.tsx",
-        "meta.object-literal.key.ts",
-        "meta.object-literal.key.tsx"
-      ],
-      syntax.property
-    ),
-
-    createTokenColor(
-      "Python special methods",
-      [
-        "entity.name.function.magic.python"
-      ],
-      syntax.specialMethod
-    ),
-
-    createTokenColor(
-      "Python built-ins",
-      [
-        "support.function.builtin.python",
-        "support.type.python",
-        "support.variable.python"
-      ],
-      syntax.pythonBuiltin
-    ),
-
-    createTokenColor(
-      "Python exceptions",
-      [
-        "support.type.exception.python",
-        "entity.name.type.exception.python"
-      ],
-      syntax.exception
-    ),
-
-    createTokenColor(
-      "Python decorators",
-      [
-        "meta.function.decorator.python",
-        "entity.name.function.decorator.python",
-        "punctuation.definition.decorator.python"
-      ],
-      syntax.decorator
-    ),
-    createTokenColor(
-      "Java package and import keywords",
-      [
-        "keyword.other.package.java",
-        "keyword.control.import.java"
-      ],
-      syntax.import
-    ),
-
-    createTokenColor(
-      "Java declaration keywords",
-      [
-        "storage.type.class.java",
-        "storage.type.interface.java",
-        "storage.type.enum.java",
-        "storage.type.record.java"
-      ],
-      syntax.declaration
-    ),
-    createTokenColor(
-      "Java primitive types",
-      [
-        "storage.type.primitive.java"
-      ],
-      syntax.type
-    ),
-    createTokenColor(
-      "Java annotations",
-      [
-        "storage.type.annotation.java",
-        "meta.declaration.annotation.java",
-        "entity.name.type.annotation.java"
-      ],
-      syntax.decorator
-    ),
-
-    createTokenColor(
-      "Java constructors",
-      [
-        "entity.name.function.constructor.java",
-        "meta.method.identifier.java"
-      ],
-      syntax.constructor
-    ),
-
-    createTokenColor(
-      "Java constants",
-      [
-        "variable.other.constant.java",
-        "constant.other.java"
-      ],
-      syntax.constant
-    ),
-
-    createTokenColor(
-      "Java primitive types",
-      [
-        "storage.type.primitive.java",
-        "storage.type.java"
-      ],
-      syntax.type
-    ),
-    createTokenColor(
-      "Import and export keywords",
-      [
-        "keyword.control.import",
-        "keyword.control.export",
-        "keyword.control.from",
-        "keyword.control.as"
-      ],
-      syntax.import
-    ),
-
-    createTokenColor(
-      "Module and package paths",
-      [
-        "entity.name.module",
-        "support.module",
-        "string.quoted.module"
-      ],
-      syntax.modulePath
-    ),
-
-    createTokenColor(
-      "Constructors",
-      [
-        "entity.name.function.constructor",
-        "meta.function.constructor",
-        "support.class"
-      ],
-      syntax.constructor
-    ),
-
-    createTokenColor(
-      "Built-in objects",
-      [
-        "support.class",
-        "support.type",
-        "support.variable",
-        "support.constant"
-      ],
-      syntax.builtin
-    ),
-
-    createTokenColor(
-      "Regular expressions",
-      [
-        "string.regexp",
-        "string.regexp.js",
-        "string.regexp.ts"
-      ],
-      syntax.regex
-    ),
-    createTokenColor(
-      "Environment variable keys",
-      [
-        "variable.other.env",
-        "variable.other.assignment.env",
-        "entity.name.variable.env"
-      ],
-      syntax.environmentKey
-    ),
-
-    createTokenColor(
-      "Environment variable values",
-      [
-        "string.unquoted.env",
-        "string.quoted.double.env",
-        "string.quoted.single.env"
-      ],
-      syntax.string
-    ),
-    createTokenColor(
-      "YAML property keys",
-      [
-        "entity.name.tag.yaml",
-        "meta.mapping.key.yaml string.unquoted.plain.out.yaml",
-        "meta.mapping.key.yaml string.unquoted.plain.in.yaml"
-      ],
-      syntax.dataKey
-    ),
-    createTokenColor(
-      "YAML plain values",
-      [
-        "meta.mapping.value.yaml string.unquoted.plain.out.yaml",
-        "meta.mapping.value.yaml string.unquoted.plain.in.yaml",
-        "meta.block.mapping.value.yaml string.unquoted.plain.out.yaml"
-      ],
-      syntax.dataValue
-    ),
-    createTokenColor(
-      "YAML anchors",
-      [
-        "entity.name.type.anchor.yaml",
-        "variable.other.anchor.yaml"
-      ],
-      syntax.yamlAnchor
-    ),
-
-    createTokenColor(
-      "YAML aliases",
-      [
-        "variable.other.alias.yaml"
-      ],
-      syntax.yamlAlias
-    ),
-
-    createTokenColor(
-      "YAML constants",
-      [
-        "constant.language.yaml",
-        "constant.numeric.yaml"
-      ],
-      syntax.constant
-    ),
-    createTokenColor(
-      "JSON property keys",
-      [
-        "support.type.property-name.json"
-      ],
-      syntax.dataKey
-    ),
-    createTokenColor(
-      "JSON string values",
-      [
-        "meta.structure.dictionary.value.json string.quoted.double.json",
-        "meta.structure.array.json string.quoted.double.json"
-      ],
-      syntax.string
-    ),
-    createTokenColor(
-      "JSON constants",
-      [
-        "constant.language.json"
-      ],
-      syntax.constant
-    ),
-
-    createTokenColor(
-      "JSON punctuation",
-      [
-        "punctuation.support.type.property-name.begin.json",
-        "punctuation.support.type.property-name.end.json",
-        "punctuation.separator.dictionary.key-value.json",
-        "punctuation.separator.dictionary.pair.json"
-      ],
-      syntax.punctuation
-    ),
-    createTokenColor(
-      "Markdown headings",
-      [
-        "markup.heading",
-        "entity.name.section",
-        "markup.heading.markdown"
-      ],
-      syntax.markupHeading,
-      "bold"
-    ),
-
-    createTokenColor(
-      "Markdown heading punctuation",
-      [
-        "punctuation.definition.heading",
-        "punctuation.definition.heading.markdown"
-      ],
-      syntax.keywordControl,
-      "bold"
-    ),
-
-    createTokenColor(
-      "Markdown bold",
-      [
-        "markup.bold",
-        "markup.bold.markdown"
-      ],
-      tokens.semantic.contextStrong,
-      "bold"
-    ),
-
-    createTokenColor(
-      "Markdown italic",
-      [
-        "markup.italic",
-        "markup.italic.markdown"
-      ],
-      syntax.markupEmphasis,
-      "italic"
-    ),
-
-    createTokenColor(
-      "Markdown inline code",
-      [
-        "markup.inline.raw",
-        "markup.inline.raw.string.markdown"
-      ],
-      syntax.markupCode
-    ),
-
-    createTokenColor(
-      "Markdown fenced code",
-      [
-        "markup.fenced_code.block",
-        "markup.raw.block"
-      ],
-      syntax.markupCode
-    ),
-
-    createTokenColor(
-      "Markdown quotes",
-      [
-        "markup.quote",
-        "markup.quote.markdown"
-      ],
-      syntax.markupQuote,
-      "italic"
-    ),
-
-    createTokenColor(
-      "Markdown list punctuation",
-      [
-        "punctuation.definition.list",
-        "punctuation.definition.list.begin.markdown",
-        "punctuation.definition.list.begin"
-      ],
-      syntax.keywordControl
-    ),
-
-    createTokenColor(
-      "Markdown links",
-      [
-        "markup.underline.link",
-        "string.other.link",
-        "meta.link.inline"
-      ],
-      syntax.tag
-    ),
-    createTokenColor(
-      "CSS element selectors",
-      [
-        "entity.name.tag.css"
-      ],
-      syntax.cssSelector
-    ),
-
-    createTokenColor(
-      "CSS class selectors",
-      [
-        "entity.other.attribute-name.class.css"
-      ],
-      syntax.cssSelector
-    ),
-
-    createTokenColor(
-      "CSS id and pseudo selectors",
-      [
-        "entity.other.attribute-name.id.css",
-        "entity.other.attribute-name.pseudo-class.css",
-        "entity.other.attribute-name.pseudo-element.css"
-      ],
-      syntax.cssSelectorSpecial
-    ),
-
-    createTokenColor(
-      "CSS properties",
-      [
-        "support.type.property-name.css",
-        "meta.property-name.css"
-      ],
-      syntax.cssProperty
-    ),
-
-    createTokenColor(
-      "CSS property values",
-      [
-        "support.constant.property-value.css",
-        "support.constant.font-name.css",
-        "support.constant.color.css",
-        "constant.other.color.rgb-value.css"
-      ],
-      syntax.cssValue
-    ),
-
-    createTokenColor(
-      "Comments",
-      [
-        "comment",
-        "punctuation.definition.comment"
-      ],
-      syntax.comment,
-      "italic"
-    ),
-
-    createTokenColor(
-      "Documentation",
-      [
-        "comment.block.documentation",
-        "comment.line.documentation"
-      ],
-      syntax.documentation,
-      "italic"
-    ),
-
-    createTokenColor(
-      "Language keywords",
-      [
-        "keyword",
-        "storage.modifier",
-        "storage.type.function"
-      ],
-      syntax.keyword
-    ),
-
-    createTokenColor(
-      "Java package paths",
-      [
-        "meta.package.java storage.modifier.package.java"
-      ],
-      syntax.modulePath
-    ),
-
-    createTokenColor(
-      "Java import paths",
-      [
-        "meta.import.java storage.modifier.import.java"
-      ],
-      syntax.modulePath
-    ),
-
-    createTokenColor(
-      "Control flow",
-      [
-        "keyword.control",
-        "keyword.control.conditional",
-        "keyword.control.loop",
-        "keyword.control.exception",
-        "keyword.control.import",
-        "keyword.control.return"
-      ],
-      syntax.keywordControl
-    ),
-
-    createTokenColor(
-      "Operators",
-      [
-        "keyword.operator",
-        "keyword.operator.assignment",
-        "keyword.operator.arithmetic",
-        "keyword.operator.logical",
-        "keyword.operator.comparison",
-        "keyword.operator.accessor"
-      ],
-      syntax.operator
-    ),
-
-    createTokenColor(
-      "TypeScript declaration keywords",
-      [
-        "storage.type.interface.ts",
-        "storage.type.class.ts",
-        "storage.type.enum.ts",
-        "storage.type.type.ts",
-        "storage.type.namespace.ts",
-        "storage.type.interface.tsx",
-        "storage.type.class.tsx"
-      ],
-      syntax.declaration
-    ),
-
-    createTokenColor(
-      "TypeScript type names",
-      [
-        "entity.name.type.interface.ts",
-        "entity.name.type.class.ts",
-        "entity.name.type.alias.ts",
-        "entity.name.type.enum.ts",
-        "entity.name.type.interface.tsx",
-        "entity.name.type.class.tsx"
-      ],
-      syntax.type
-    ),
-
-    createTokenColor(
-      "Rust declaration keywords",
-      [
-        "storage.type.struct.rust",
-        "storage.type.enum.rust",
-        "storage.type.trait.rust",
-        "storage.type.type.rust",
-        "storage.type.union.rust"
-      ],
-      syntax.declaration
-    ),
-
-    createTokenColor(
-      "Rust types",
-      [
-        "entity.name.type.struct.rust",
-        "entity.name.type.enum.rust",
-        "entity.name.type.trait.rust",
-        "entity.name.type.rust",
-        "support.type.rust",
-        "storage.type.numeric.rust",
-        "storage.type.primitive.rust"
-      ],
-      syntax.type
-    ),
-
-    createTokenColor(
-      "Rust functions",
-      [
-        "entity.name.function.rust",
-        "meta.function.call.rust entity.name.function.rust"
-      ],
-      syntax.function
-    ),
-
-    createTokenColor(
-      "Rust macros",
-      [
-        "entity.name.function.macro.rust",
-        "support.macro.rust",
-        "meta.macro.rust"
-      ],
-      syntax.macro
-    ),
-
-    createTokenColor(
-      "Rust lifetimes",
-      [
-        "entity.name.type.lifetime.rust",
-        "storage.modifier.lifetime.rust",
-        "variable.other.lifetime.rust"
-      ],
-      syntax.lifetime
-    ),
-
-    createTokenColor(
-      "Rust module paths",
-      [
-        "entity.name.namespace.rust",
-        "entity.name.module.rust",
-        "meta.use.rust entity.name.namespace.rust"
-      ],
-      syntax.modulePath
-    ),
-
-    createTokenColor(
-      "Rust constants",
-      [
-        "variable.other.constant.rust",
-        "constant.other.rust"
-      ],
-      syntax.constant
-    ),
-
-    createTokenColor(
-      "C preprocessor directives",
-      [
-        "meta.preprocessor.c",
-        "keyword.control.directive.c",
-        "keyword.control.import.c",
-        "punctuation.definition.directive.c"
-      ],
-      syntax.preprocessor
-    ),
-
-    createTokenColor(
-      "C primitive types",
-      [
-        "storage.type.c",
-        "storage.type.built-in.c",
-        "support.type.c"
-      ],
-      syntax.type
-    ),
-
-    createTokenColor(
-      "C functions",
-      [
-        "entity.name.function.c",
-        "meta.function.c entity.name.function.c"
-      ],
-      syntax.function
-    ),
-
-    createTokenColor(
-      "C constants",
-      [
-        "constant.other.c",
-        "variable.other.constant.c"
-      ],
-      syntax.constant
-    ),
-
-    createTokenColor(
-      "C labels",
-      [
-        "entity.name.label.c"
-      ],
-      syntax.label
-    ),
-
-    createTokenColor(
-      "C header paths",
-      [
-        "string.quoted.other.lt-gt.include.c",
-        "string.quoted.double.include.c"
-      ],
-      syntax.modulePath
-    ),
-
-    createTokenColor(
-      "Named types",
-      [
-        "entity.name.type",
-        "entity.name.class",
-        "entity.name.interface",
-        "entity.name.struct",
-        "entity.name.enum",
-        "support.type"
-      ],
-      syntax.type
-    ),
-
-    createTokenColor(
-      "Type declaration keywords",
-      [
-        "storage.type.class",
-        "storage.type.interface",
-        "storage.type.struct",
-        "storage.type.enum",
-        "storage.type.trait",
-        "storage.type.union",
-        "storage.type.record"
-      ],
-      syntax.declaration
-    ),
-
-    createTokenColor(
-      "Namespaces",
-      [
-        "entity.name.namespace",
-        "entity.name.module",
-        "support.module"
-      ],
-      syntax.namespace
-    ),
-
-    createTokenColor(
-      "Functions",
-      [
-        "entity.name.function",
-        "support.function",
-        "variable.function",
-        "meta.function-call entity.name.function"
-      ],
-      syntax.function
-    ),
-
-    createTokenColor(
-      "Methods",
-      [
-        "entity.name.function.member",
-        "meta.method-call entity.name.function",
-        "support.function.method"
-      ],
-      syntax.method
-    ),
-
-    createTokenColor(
-      "Variables",
-      [
-        "variable",
-        "meta.definition.variable"
-      ],
-      syntax.variable
-    ),
-
-    createTokenColor(
-      "Parameters",
-      [
-        "variable.parameter"
-      ],
-      syntax.parameter
-    ),
-
-    createTokenColor(
-      "Properties",
-      [
-        "variable.other.property",
-        "support.type.property-name",
-        "meta.object-literal.key"
-      ],
-      syntax.property
-    ),
-
-    createTokenColor(
-      "Strings",
-      [
-        "string"
-      ],
-      syntax.string
-    ),
-
-    createTokenColor(
-      "Numbers",
-      [
-        "constant.numeric"
-      ],
-      syntax.number
-    ),
-
-    createTokenColor(
-      "Boolean values",
-      [
-        "constant.language.boolean"
-      ],
-      syntax.boolean
-    ),
-
-    createTokenColor(
-      "Null values",
-      [
-        "constant.language.null"
-      ],
-      syntax.null
-    ),
-
-    createTokenColor(
-      "Decorators and annotations",
-      [
-        "meta.decorator",
-        "storage.type.annotation"
-      ],
-      syntax.decorator
-    ),
-
-    createTokenColor(
-      "Structural punctuation",
-      [
-        "punctuation.separator",
-        "punctuation.terminator",
-        "punctuation.accessor",
-        "punctuation.definition.parameters",
-        "punctuation.definition.typeparameters"
-      ],
-      syntax.punctuation
-    ),
-
-    createTokenColor(
-      "HTML and XML tags",
-      [
-        "entity.name.tag",
-        "entity.name.tag.html",
-        "entity.name.tag.xml"
-      ],
-      syntax.tag
-    ),
-
-    createTokenColor(
-      "HTML and XML attributes",
-      [
-        "entity.other.attribute-name",
-        "entity.other.attribute-name.html",
-        "entity.other.attribute-name.xml"
-      ],
-      syntax.attribute
-    ),
-
-    createTokenColor(
-      "Tag punctuation",
-      [
-        "punctuation.definition.tag",
-        "punctuation.definition.tag.begin",
-        "punctuation.definition.tag.end"
-      ],
-      syntax.punctuation
-    ),
-
-    createTokenColor(
-      "Template delimiters",
-      [
-        "punctuation.definition.template-expression",
-        "punctuation.section.embedded.begin",
-        "punctuation.section.embedded.end"
-      ],
-      syntax.keywordControl
-    ),
-
-    createTokenColor(
-      "Invalid",
-      [
-        "invalid",
-        "invalid.illegal"
-      ],
-      syntax.invalid
-    )
-  ];
-
-  const semanticTokenColors = {
-    "class:java": assertColor(
-      syntax.type,
-      "semanticTokenColors.class:java"
-    ),
-    "namespace:java": assertColor(
-      syntax.modulePath,
-      "semanticTokenColors.namespace:java"
-    ),
-
-    "class.defaultLibrary:java": assertColor(
-      syntax.builtin,
-      "semanticTokenColors.class.defaultLibrary:java"
-    ),
-
-    "type.defaultLibrary:java": assertColor(
-      syntax.builtin,
-      "semanticTokenColors.type.defaultLibrary:java"
-    ),
-      "variable.defaultLibrary:python": assertColor(
-      syntax.pythonBuiltin,
-      "semanticTokenColors.variable.defaultLibrary:python"
-    ),
-
-    "function.defaultLibrary:python": assertColor(
-      syntax.pythonBuiltin,
-      "semanticTokenColors.function.defaultLibrary:python"
-    ),
-
-    "method:python": assertColor(
-      syntax.method,
-      "semanticTokenColors.method:python"
-    ),
-    "type.declaration": assertColor(
-      syntax.type,
-      "semanticTokenColors.type.declaration"
-    ),
-
-    "class.declaration": assertColor(
-      syntax.type,
-      "semanticTokenColors.class.declaration"
-    ),
-
-    "interface.declaration": assertColor(
-      syntax.interfaceDeclaration,
-      "semanticTokenColors.interface.declaration"
-    ),
-
-    "struct.declaration": assertColor(
-      syntax.type,
-      "semanticTokenColors.struct.declaration"
-    ),
-
-    namespace: assertColor(
-      syntax.modulePath,
-      "semanticTokenColors.namespace"
-    ),
-
-    "variable.readonly": assertColor(
-      syntax.constant,
-      "semanticTokenColors.variable.readonly"
-    ),
-
-    label: assertColor(
-      syntax.label,
-      "semanticTokenColors.label"
-    ),
-    keyword: assertColor(
-      syntax.keyword,
-      "semanticTokenColors.keyword"
-    ),
-
-    regexp: assertColor(
-      syntax.regex,
-      "semanticTokenColors.regexp"
-    ),
-
-    "variable.readonly": assertColor(
-      syntax.readonlyVariable,
-      "semanticTokenColors.variable.readonly"
-    ),
-
-    "property.readonly": assertColor(
-      syntax.dataKey,
-      "semanticTokenColors.property.readonly"
-    ),
-
-    "method.static": assertColor(
-      syntax.function,
-      "semanticTokenColors.method.static"
-    ),
-
-    "function.static": assertColor(
-      syntax.function,
-      "semanticTokenColors.function.static"
-    ),
-
-    "class.defaultLibrary": assertColor(
-      syntax.builtin,
-      "semanticTokenColors.class.defaultLibrary"
-    ),
-
-    "type.defaultLibrary": assertColor(
-      syntax.builtinType,
-      "semanticTokenColors.type.defaultLibrary"
-    ),
-    variable: assertColor(
-      syntax.variable,
-      "semanticTokenColors.variable"
-    ),
-
-    "variable.readonly": assertColor(
-      syntax.readonlyVariable,
-      "semanticTokenColors.variable.readonly"
-    ),
-
-    "variable.defaultLibrary": assertColor(
-      syntax.namespace,
-      "semanticTokenColors.variable.defaultLibrary"
-    ),
-
-    parameter: assertColor(
-      syntax.parameter,
-      "semanticTokenColors.parameter"
-    ),
-
-    property: assertColor(
-      syntax.property,
-      "semanticTokenColors.property"
-    ),
-
-    function: assertColor(
-      syntax.function,
-      "semanticTokenColors.function"
-    ),
-
-    "function.defaultLibrary": assertColor(
-      syntax.function,
-      "semanticTokenColors.function.defaultLibrary"
-    ),
-
-    method: assertColor(
-      syntax.method,
-      "semanticTokenColors.method"
-    ),
-
-    macro: assertColor(
-      syntax.macro,
-      "semanticTokenColors.macro"
-    ),
-
-    class: assertColor(
-      syntax.type,
-      "semanticTokenColors.class"
-    ),
-
-    interface: assertColor(
-      syntax.type,
-      "semanticTokenColors.interface"
-    ),
-
-    struct: assertColor(
-      syntax.type,
-      "semanticTokenColors.struct"
-    ),
-
-    type: assertColor(
-      syntax.type,
-      "semanticTokenColors.type"
-    ),
-
-    typeParameter: assertColor(
-      syntax.type,
-      "semanticTokenColors.typeParameter"
-    ),
-
-    enum: assertColor(
-      syntax.type,
-      "semanticTokenColors.enum"
-    ),
-
-    enumMember: assertColor(
-      syntax.enumMember,
-      "semanticTokenColors.enumMember"
-    ),
-
-    decorator: assertColor(
-      syntax.decorator,
-      "semanticTokenColors.decorator"
-    )
-  };
+  let tokenColors = buildTextMateRules(tokens);
+  let semanticTokenColors = buildSemanticRules(tokens);
+  for (const key of Object.keys(colors)) {
+    if (key.startsWith("editorBracketHighlight.")) delete colors[key];
+  }
+  for (const key of policy.omitColors ?? []) delete colors[key];
+  if (policy.textMate) tokenColors = policy.textMate(tokenColors, tokens);
+  if (policy.semantic) semanticTokenColors = semanticRulesFromEntries(policy.semantic(Object.entries(semanticTokenColors), tokens));
 
   return {
     "$schema": "vscode://schemas/color-theme",
@@ -3039,22 +2042,80 @@ function buildTheme(tokens, variantName) {
   };
 }
 
-function buildAllThemes(
-  resolvedVariantTokens
-) {
-  return Object.fromEntries(
-    REQUIRED_VARIANTS.map((variantName) => [
-      variantName,
-      buildTheme(
-        resolvedVariantTokens[variantName],
-        variantName
-      )
-    ])
-  );
+function buildAllThemes(resolvedVariantTokens, policies = {}) {
+  const common = buildTheme(resolvedVariantTokens.coherence, "coherence");
+  return Object.fromEntries(REQUIRED_VARIANTS.map((name) => {
+    const theme = buildTheme(resolvedVariantTokens[name], name, policies[name]);
+    // Backgrounds retain each variant's surfaces; all foregrounds and accents share one policy.
+    for (const key of Object.keys(theme.colors)) {
+      if (name !== "ash" && !key.toLowerCase().includes("background")) theme.colors[key] = common.colors[key];
+    }
+    return [name, theme];
+  }));
 }
 
 function serializeJson(value) {
   return `${JSON.stringify(value, null, 2)}\n`;
+}
+
+// Legacy exceptions are exact snapshots of selector, rule position, name and settings.
+function validateTextMateDuplicates(theme, exceptions = {}) {
+  const occurrences = new Map();
+  for (const [index, rule] of theme.tokenColors.entries()) {
+    for (const scope of Array.isArray(rule.scope) ? rule.scope : [rule.scope]) {
+      if (typeof scope !== "string" || !scope) throw new Error("Invalid TextMate selector");
+      if (!occurrences.has(scope)) occurrences.set(scope, []);
+      occurrences.get(scope).push({ index, name: rule.name, settings: rule.settings });
+    }
+  }
+  const duplicates = Object.fromEntries([...occurrences].filter(([, rules]) => rules.length > 1));
+  for (const scope of new Set([...Object.keys(duplicates), ...Object.keys(exceptions)])) {
+    if (JSON.stringify(duplicates[scope]) !== JSON.stringify(exceptions[scope])) {
+      throw new Error(`Unauthorized or changed duplicate TextMate selector: ${scope}`);
+    }
+  }
+}
+
+function validateRegistry(tokens, manifest, outputPaths, themeFiles) {
+  const variants = Object.keys(tokens.variants).sort();
+  const outputs = Object.keys(outputPaths).sort();
+  if (JSON.stringify(variants) !== JSON.stringify(outputs) ||
+      JSON.stringify(outputs) !== JSON.stringify([...REQUIRED_VARIANTS].sort())) {
+    throw new Error("Variant definitions and generated outputs differ");
+  }
+  const entries = manifest.contributes?.themes;
+  if (!Array.isArray(entries) || entries.length !== variants.length) throw new Error("Theme registrations do not match variants");
+  const expectedFiles = [];
+  const seenLabels = new Set();
+  for (const key of variants) {
+    const variant = tokens.variants[key];
+    const expectedPath = `./themes/k2-${key}.json`;
+    if (path.resolve(ROOT_DIR, expectedPath) !== outputPaths[key]) throw new Error(`Incorrect output path: ${key}`);
+    const matches = entries.filter(entry => entry.path === expectedPath);
+    if (matches.length !== 1 || matches[0].label !== variant.name || matches[0].uiTheme !== variant.uiTheme || seenLabels.has(variant.name)) {
+      throw new Error(`Invalid theme registration: ${key}`);
+    }
+    seenLabels.add(variant.name);
+    expectedFiles.push(path.basename(expectedPath));
+  }
+  if (JSON.stringify(expectedFiles.sort()) !== JSON.stringify([...themeFiles].sort())) {
+    throw new Error("Theme files and registrations differ");
+  }
+}
+
+function prepareThemes(rawTokens, manifest, themeFiles, exceptions) {
+  validateRawTokens(rawTokens);
+  validateRegistry(rawTokens, manifest, THEME_OUTPUTS, themeFiles);
+  const resolved = resolveVariantTokenTrees(rawTokens);
+  for (const name of REQUIRED_VARIANTS) {
+    validateResolvedTokens(resolved[name]);
+    validateContrastContracts(resolved[name], name);
+  }
+  const themes = buildAllThemes(resolved);
+  for (const name of REQUIRED_VARIANTS) {
+    validateTextMateDuplicates(themes[name]);
+  }
+  return { resolved, themes };
 }
 
 function printContrastReport(
@@ -3119,42 +2180,16 @@ function run() {
 
   const rawTokens = readJson(TOKENS_PATH);
 
-  validateRawTokens(rawTokens);
+  const manifest = readJson(path.join(ROOT_DIR, "package.json"));
+  const exceptions = readJson(path.join(ROOT_DIR, "design", "legacy-textmate-duplicates.json"));
+  const themeFiles = fs.readdirSync(path.join(ROOT_DIR, "themes")).filter(name => name.endsWith(".json"));
+  const { resolved: resolvedVariantTokens, themes: generatedThemes } = prepareThemes(rawTokens, manifest, themeFiles, exceptions);
 
-  const resolvedVariantTokens =
-    resolveVariantTokenTrees(rawTokens);
-
-  for (const variantName of REQUIRED_VARIANTS) {
-    const variantTokens =
-      resolvedVariantTokens[variantName];
-
-    validateResolvedTokens(variantTokens);
-
-    validateContrastContracts(
-      variantTokens,
-      variantName
-    );
-  }
-
-  if (reportContrast) {
-    printContrastReport(
-      resolvedVariantTokens
-    );
-  }
-
-  /*
-   * Validation must not generate or modify theme files.
-   */
+  if (reportContrast) printContrastReport(resolvedVariantTokens);
   if (validateOnly) {
-    console.log(
-      "K2 token architecture and contrast contracts are valid."
-    );
+    console.log("K2 token architecture, generated themes and contrast contracts are valid.");
     return;
   }
-
-  const generatedThemes = buildAllThemes(
-    resolvedVariantTokens
-  );
 
   const generatedSources = Object.fromEntries(
     Object.entries(generatedThemes).map(
@@ -3252,12 +2287,11 @@ function run() {
   }
 }
 
-try {
-  run();
-} catch (error) {
-  fail(
-    error instanceof Error
-      ? error.message
-      : String(error)
-  );
+if (require.main === module) {
+  try { run(); } catch (error) { fail(error instanceof Error ? error.message : String(error)); }
 }
+
+module.exports = { resolveValue, resolveTokens, createVariantTokenTree, validateRawTokens,
+  validateResolvedTokens, validateContrastContracts, buildTextMateRules, buildSemanticRules,
+  semanticRulesFromEntries, buildTheme, buildAllThemes, serializeJson,
+  resolveVariantTokenTrees, validateRegistry, validateTextMateDuplicates, prepareThemes, contrastRatio, THEME_OUTPUTS, REQUIRED_VARIANTS };
